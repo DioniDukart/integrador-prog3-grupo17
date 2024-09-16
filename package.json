@@ -1,0 +1,22 @@
+{
+  "name": "integrador-prog3-grupo17",
+  "version": "1.0.0",
+  "description": "integrador programacion 3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DioniDukart/integrador-prog3-grupo17.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DioniDukart/integrador-prog3-grupo17/issues"
+  },
+  "homepage": "https://github.com/DioniDukart/integrador-prog3-grupo17#readme",
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
