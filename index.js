@@ -5,6 +5,7 @@ import handlebars from "handlebars";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+
 import { conexion } from "./bd/conexionBD.js";
 
 const app = express();
@@ -22,7 +23,7 @@ app.listen(puerto, () => {
 });
 
 //crea estado de reclamo
-app.post("/estados-reclamos/", async (req, res) => {
+app.post("/reclamos-estados/", async (req, res) => {
     try {
         const { descripcion, activo } = req.body;
 
@@ -71,7 +72,7 @@ app.post("/estados-reclamos/", async (req, res) => {
 });
 
 //consulta todo
-app.get("/estados-reclamos", async (req, res) => {
+app.get("/reclamos-estados", async (req, res) => {
     try {
         const consultaSql = "SELECT * FROM reclamos_estado WHERE activo=1;";
 
@@ -90,7 +91,7 @@ app.get("/estados-reclamos", async (req, res) => {
 });
 
 //consulta un unico segun su id
-app.get("/estados-reclamos/:idEstadoReclamo", async (req, res) => {
+app.get("//reclamos-estados/:idReclamoEstado", async (req, res) => {
     try {
         const id = req.params.idEstadoReclamo;
 
@@ -116,7 +117,7 @@ app.get("/estados-reclamos/:idEstadoReclamo", async (req, res) => {
 });
 
 //patch porque modifica algunos campos de una tabla
-app.patch("/estados-reclamos/:idEstadoReclamo", async (req, res) => {
+app.patch("//reclamos-estados/:idReclamoEstado", async (req, res) => {
     try {
         const { descripcion, activo } = req.body;
 

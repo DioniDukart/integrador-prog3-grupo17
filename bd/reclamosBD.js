@@ -29,14 +29,14 @@ export default class ReclamosBD{
         const [infoCreacion] = await conexion.query(consultaSql, reclamoNuevo);
         
         return this.buscarPorId(infoCreacion[0].insertId);
-    }
+    };
 
     buscarTodos= async ()=>{
         const consultaSql = "SELECT * FROM reclamos WHERE activo=1";
         const [resultado] = await conexion.query(consultaSql);
 
         return (resultado.length > 0) ? resultado[0] : null;
-    }
+    };
 
     /*
     //Consulta todos CON PAGINACION
@@ -90,6 +90,8 @@ export default class ReclamosBD{
     eliminar= async (idReclamo)=>{
         const consultaSql= "UPDATE reclamos SET activo=0 WHERE idReclamo=?";
         
-        await this.conexion.query(consultaSql, idReclamo);
+        const [resultado]= await this.conexion.query(consultaSql, idReclamo);
+
+        return resultado;
     }
 }

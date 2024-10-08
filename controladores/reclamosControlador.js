@@ -137,16 +137,18 @@ export default class ReclamosControlador {
         }
     }
 
-    //VER QUE HACER CON idUsuarioFinalizador
+    //VER QUE HACER CON idUsuarioFinalizador si idReclamoEstado es 3-4 (de donde sacaria el idUsuario?,)
     actualizar = async (req, res) => {
         const id = req.params.idReclamo;
 
         const cuerpo = req.body;
 
-        if (!id) {
+        if (id===null || id===undefined) {
             res.status(404).json({ status: "Fallo", data: { error: "El parametro no puede ser vacio." } });
         }
-
+        if (!this.buscarPorId(id)) {//seria mas conveniente llamar otra capa?
+            res.status(404).json({ status: "Fallo", data: { error: "No existe reclamo con el id ingresado." } });
+        }
         /*
         //si idReclamoEstado tiene un valor valido, verifico que sea un numero y que no este fuera del rango de valores valido
         if(cuerpo.idReclamoEstado){
@@ -174,17 +176,26 @@ export default class ReclamosControlador {
     eliminar = async (req, res) => {
         const id = req.params.idReclamo;
 
-        if (!id) {
-            res.status(404).json({ status: "Fallo", data: { error: "El parametro no puede ser vacio." } });
+        if (!id || !this.buscarPorId(id)) {
+            res.status(404).json({
+                mensaje: "Id recibido no valido"
+            });
         }
 
         try {
-            await this.reclamosServicios.eliminar(id);
-
+            const resultado= await this.reclamosServicios.eliminar(id);
+            
             //res.status(204).send();
+            if (resultado.affectedRows === 0) {
+                res.status(404).json({
+                    mensaje: "No se pudo eliminar."
+                });
+            }
+            
             res.status(204).json({
                 mensaje: `Reclamo ${id} eliminado.`
             });
+            
         } catch (error) {
             res.status(500).json({
                 mensaje: "Error"

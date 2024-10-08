@@ -4,6 +4,15 @@ export default class ReclamosServicios {
     constructor(){
         this.reclamosBD= new ReclamosBD();
     }
+    
+    crear= (reclamo)=>{
+        const reclamoNuevo={
+            ...reclamo,
+            fechaCreado: new Date().toISOString().replace('T', ' ').replace('Z', ''),
+            idReclamoEstado: 1
+        }
+        return this.reclamosBD.crear(reclamoNuevo);
+    }
 
     buscarTodos= ()=>{
         return this.reclamosBD.buscarTodos();
@@ -27,14 +36,6 @@ export default class ReclamosServicios {
         return this.reclamosBD.buscarPorId(id);
     }
 
-    crear= (reclamo)=>{
-        const reclamoNuevo={
-            ...reclamo,
-            fechaCreado: new Date().toISOString().replace('T', ' ').replace('Z', ''),
-            idReclamoEstado: 1
-        }
-        return this.reclamosBD.crear(reclamoNuevo);
-    }
     /*
     actualizar= (idReclamo, reclamo)=>{
         //fechaFinalizado-fechaCancelado, idUsuarioFinalizador?
@@ -64,7 +65,7 @@ export default class ReclamosServicios {
             if(reclamo.reclamoEstado===4) {
                 reclamoActualizado.fechaFinalizado = fecha;
             } else {
-                reclamoActualizado.fechaCancelado = fecha;    
+                reclamoActualizado.fechaCancelado = fecha;
             }
 
             return this.reclamosBD.crear(idReclamo, reclamoActualizado);
@@ -74,7 +75,6 @@ export default class ReclamosServicios {
     }
 
     eliminado= (idReclamo)=>{
-        
         return this.reclamosBD.crear(idReclamo);
     }
 }
