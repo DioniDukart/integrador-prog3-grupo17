@@ -5,7 +5,8 @@ import handlebars from "handlebars";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { conexion } from "./database/conexionBD.js";
+
+import { conexion } from "./bd/conexionBD.js";
 
 const app = express();
 dotenv.config();
@@ -22,7 +23,7 @@ app.listen(puerto, () => {
 });
 
 //crea estado de reclamo
-app.post("/estados-reclamos/", async (req, res) => {
+app.post("/reclamos-estados/", async (req, res) => {
     try {
         const { descripcion, activo } = req.body;
 
@@ -71,7 +72,7 @@ app.post("/estados-reclamos/", async (req, res) => {
 });
 
 //consulta todo
-app.get("/estados-reclamos", async (req, res) => {
+app.get("/reclamos-estados", async (req, res) => {
     try {
         const consultaSql = "SELECT * FROM reclamos_estado WHERE activo=1;";
 
@@ -90,13 +91,13 @@ app.get("/estados-reclamos", async (req, res) => {
 });
 
 //consulta un unico segun su id
-app.get("/estados-reclamos/:idEstadoReclamo", async (req, res) => {
+app.get("//reclamos-estados/:idReclamoEstado", async (req, res) => {
     try {
         const id = req.params.idEstadoReclamo;
 
         //EVITAR " $() ", vulnerable a injectsql
         //const consultaSql = `SELECT * FROM reclamos_estado WHERE activo=1 AND idReclamosEstado=${id}`;
-        const consultaSql = "SELECT * FROM reclamos_estado WHERE activo=1 AND idReclamosEstado=?";
+        const consultaSql = "SELECT * FROM reclamos_estado WHERE activo=1 AND idReclamoEstado=?";
         const [resultado] = await conexion.query(consultaSql, [id]);//podria pasar varios valores con un [array] en vez de id
 
         if (resultado.length === 0) {
@@ -116,7 +117,7 @@ app.get("/estados-reclamos/:idEstadoReclamo", async (req, res) => {
 });
 
 //patch porque modifica algunos campos de una tabla
-app.patch("/estados-reclamos/:idEstadoReclamo", async (req, res) => {
+app.patch("//reclamos-estados/:idReclamoEstado", async (req, res) => {
     try {
         const { descripcion, activo } = req.body;
 
@@ -137,7 +138,7 @@ app.patch("/estados-reclamos/:idEstadoReclamo", async (req, res) => {
 
         //if (!descripcion || !activo) {
         if (!descripcion || activo === undefined || activo === null) {
-            return res.status(400).json({
+            return res.status(404).json({
                 mensaje: "Falta/n campo/s."
             })
         }
@@ -152,7 +153,7 @@ app.patch("/estados-reclamos/:idEstadoReclamo", async (req, res) => {
         // const resultado= await conexion.query(consultaSql, [datos, idActualizar]);
 
 
-        const consultaSql = 'UPDATE reclamos_estado SET descripcion=?, activo=? WHERE idReclamosEstado=?';
+        const consultaSql = 'UPDATE reclamos_estado SET descripcion=?, activo=? WHERE idReclamoEstado=?';
         const [resultado] = await conexion.query(consultaSql, [descripcion, activo, idActualizar]); //como hace una modificacion, me trae metadata sobre los cambios de columnas, etc
 
         if (resultado.affectedRows === 0) {
@@ -173,63 +174,8 @@ app.patch("/estados-reclamos/:idEstadoReclamo", async (req, res) => {
     };
 });
 
-
-
-//crea estado de reclamo
-app.post("/reclamos/", async (req, res) => {
-    try {
-        //luego crear un objeto para luego tirarselo a la bd?
-        const { asunto, descripcion/*, idReclamoEstado*/, idReclamoTipo, idUsuarioCreador/*, idUsuarioFinalizador*/ } = req.body;
-
-        /*
-        if (!descripcion) {
-            return res.status(404).json({
-                mensaje: "Falta el campo descripcion."
-            })
-        }
-        //if (!activo) { //no es adecuado, si se pasara "0" se evaluaria como verdadero (falsy negado)
-        if (activo===undefined || activo===null) {
-            return res.status(404).json({
-                mensaje: "Falta el campo activo."
-            })
-        }
-        */
-
-
-        //ver cuales son los requeridos
-        if (!asunto || !descripcion || !idReclamoTipo || !idUsuarioCreador) {
-            return res.status(400).json({
-                mensaje: "Falta/n campo/s."
-            })
-        }
-        const reclamo = { //VER COMO HACER "fechaCreado"
-            asunto: asunto,
-            descripcion: descripcion,
-            idReclamoTipo: idReclamoTipo,
-            idUsuarioCreador: idUsuarioCreador
-        }
-        const consultaSql = 'INSERT INTO reclamos SET ?';
-        const [resultado] = await conexion.query(consultaSql, reclamo);
-
-        if (resultado.affectedRows === 0) {
-            return res.status(404).json({
-                mensaje: "No se pudo crear."
-            });
-        }
-        //puedo usar resultado.insertId para ya traerme/verificar/mostrar la entrada creada
-
-        //res.status(200).json(resultado);
-        res.status(200).json({
-            mensaje: "Reclamo creado." /*post(resultado.insertId) O ,dato:resultado*/
-        });
-
-    } catch (err) {
-        res.status(500).json({
-            mensaje: "Error"
-        });
-    };
-});
-
+//import {router as v1Router} from "./v1/rutas/reclamosRutas.js";
+//app.use("/api/v1/rutas", v1Router);
 
 //mail
 app.post("/notificacion", (req, res) => {
@@ -254,8 +200,8 @@ app.post("/notificacion", (req, res) => {
         {
             service: "gmail",
             auth: {
-                user: process.env.DIRECCIONCORREO,
-                pass: process.env.CLAVECORREO
+                user: process.env.DIRECCION_CORREO,
+                pass: process.env.CLAVE_CORREO
             }
         }
     );
