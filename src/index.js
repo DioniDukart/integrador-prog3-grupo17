@@ -5,7 +5,7 @@ import handlebars from "handlebars";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { conexion } from "./bd/conexionBD.js";
+import { conexion } from "./database/conexionBD.js";
 
 const app = express();
 dotenv.config();
