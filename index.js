@@ -5,8 +5,11 @@ import handlebars from "handlebars";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import {router as RECLAMOSESTADO} from "./v1/rutas/reclamosEstadosRutas.js";
 
-import { conexion } from "./bd/conexionBD.js";
+app.use("./v1/rutas/reclamosEstadosRutas", RECLAMOSESTADO);
+
+//import { conexion } from "./bd/conexionBD.js";
 
 const app = express();
 dotenv.config();

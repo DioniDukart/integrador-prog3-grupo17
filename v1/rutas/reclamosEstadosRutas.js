@@ -13,5 +13,4 @@ router.delete("/reclamos-estados/:idReclamoEstado", reclamosEstadosControlador.e
 /*
 router.patch();
 */
-
 export { router };
