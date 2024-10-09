@@ -1,15 +1,15 @@
 import { conexion } from "./conexionBD.js";
 
-export default class ReclamosBD{
-    crear= async (reclamoNuevo)=>{
-        const consultaSql = 'INSERT INTO reclamos SET ?';
-        const [infoCreacion] = await conexion.query(consultaSql, reclamoNuevo);
+export default class UsuariosBD{
+    crear= async (usuarioNuevo)=>{
+        const consultaSql = 'INSERT INTO usuarios SET ?';
+        const [infoCreacion] = await conexion.query(consultaSql, usuarioNuevo);
         
         return this.buscarPorId(infoCreacion[0].insertId);
     };
 
     buscarTodos= async ()=>{
-        const consultaSql = "SELECT * FROM reclamos WHERE activo=1";
+        const consultaSql = "SELECT * FROM usuarios WHERE activo=1";
         const [resultado] = await conexion.query(consultaSql);
 
         return (resultado.length > 0) ? resultado[0] : null;
@@ -20,7 +20,7 @@ export default class ReclamosBD{
     buscarTodos= async (filter = null, limit = 0, offset = 0, order = "idReclamo", asc = "ASC") => {
 
         // Defino el string de consulta
-        let strSql= "SELECT * FROM reclamos WHERE activo=1";
+        let strSql= "SELECT usuarioId, nombre, apellido FROM usuarios WHERE activo=1";
         //let strSql = `SELECT actor_id AS actorId, first_name AS firstName, last_name AS lastName, last_update AS lastUpdate FROM actor `
 
         const filterValuesArray = [];
@@ -49,26 +49,27 @@ export default class ReclamosBD{
     }
     */
 
-    buscarPorId= async (idReclamo)=>{
-        const consultaSql= "SELECT * FROM reclamos WHERE idReclamo=?";
-        const [resultado] = await conexion.query(consultaSql, idReclamo);
+    buscarPorId= async (idUsuario)=>{
+        const consultaSql= "SELECT * FROM usuarios WHERE idUsuario=? AND activo=1";
+        const [resultado] = await conexion.query(consultaSql, idUsuario);
 
         return (resultado.length > 0) ? resultado[0] : null;
     }
 
-    actualizar= async (idReclamo, reclamo)=>{
-        const consultaSql= "UPDATE reclamos SET ? WHERE idReclamo=?";
+    actualizar= async (idUsuario, usuario)=>{
+        const consultaSql= "UPDATE usuarios SET ? WHERE idUsuario=?";
         
-        await this.conexion.query(consultaSql, [reclamo, idReclamo]);
+        await this.conexion.query(consultaSql, [usuario, idUsuario]);
 
-        return this.buscarPorId(idReclamo);
+        return this.buscarPorId(idUsuario);
     }
 
-    eliminar= async (idReclamo)=>{
-        const consultaSql= "UPDATE reclamos SET activo=0 WHERE idReclamo=?";
+    eliminar= async (idUsuario)=>{
+        const consultaSql= "UPDATE reclamos SET activo=0 WHERE idUsuario=?";
         
-        const [resultado]= await this.conexion.query(consultaSql, idReclamo);
+        const [resultado]= await this.conexion.query(consultaSql, idUsuario);
 
         return resultado;
     }
+    
 }

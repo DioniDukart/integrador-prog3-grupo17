@@ -1,14 +1,6 @@
-import dotenv from "dotenv";
-dotenv.config();
-
-//Uso mysql2/promise para conectarme a MySQL usando promises
-import mysql from "mysql2/promise";
+import { conexion } from "./conexionBD.js";
 
 export default class ReclamosEstadosBD{
-    constructor(){
-        this.initConnection();
-    }
-
     crear= async (reclamoEstadoNuevo)=>{
     //crear= async (descripcion, activo)=>{  
         //const consultaSql = 'INSERT INTO reclamos_estado (descripcion, activo) VALUES (?,?)';
