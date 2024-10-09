@@ -13,3 +13,17 @@ export const conexion = await mysql.createConnection({
     database: process.env.NOMBRE_BD //
 });
 
+/*
+async initConnection(){
+    try {
+        this.conexion=await mysql.createConnection({
+            host: process.env.HOST_BD,
+            user: process.env.USUARIO_BD,
+            password: process.env.CLAVE_BD,
+            database: process.env.NOMBRE_BD
+        });
+    } catch (error) {
+        throw new Error("No se pudo establecer la conexion con la BD.");
+    }
+}
+*/
