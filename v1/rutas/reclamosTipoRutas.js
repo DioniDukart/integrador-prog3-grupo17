@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import ReclamosTipoControlador from '.../controladores/reclamosTipoControlador.js';
+import ReclamosTipoControlador from '../controladores/reclamosTipoControlador.js';
 
 const router = Router();
 const reclamosTipoControlador = new ReclamosTipoControlador();
@@ -12,3 +12,7 @@ router.put('/:id', reclamosTipoControlador.updateTipoReclamo);
 router.delete('/:id', reclamosTipoControlador.deleteTipoReclamo);
 
 export default router;
+
+
+
+//Falta testear

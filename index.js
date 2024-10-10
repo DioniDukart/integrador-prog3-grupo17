@@ -11,7 +11,7 @@ import bodyParser from 'body-parser';
 
 app.use(bodyParser.json());
 
-// Rutas
+
 app.use('/api/reclamosTipo', reclamosTipoRoutes);
 
 

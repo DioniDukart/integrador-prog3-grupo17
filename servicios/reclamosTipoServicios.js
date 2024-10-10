@@ -34,3 +34,6 @@ class ReclamoTipoServicio {
 }
 
 export default ReclamoTipoServicio;
+
+
+//Falta testear
