@@ -5,6 +5,7 @@ import handlebars from "handlebars";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import bodyParser from 'body-parser';
 
 const app = express();
 dotenv.config();
@@ -15,6 +16,8 @@ app.use(
     //"lo que llegue en el body de las solicitud procesarlo en formato json"
     express.json() //esto es como pasar una callback?
 );
+
+app.use(bodyParser.json());
 
 app.listen(puerto, () => {
     console.log(`Hola puerto ${puerto}!`);
