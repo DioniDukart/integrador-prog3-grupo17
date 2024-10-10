@@ -72,3 +72,6 @@ class ReclamoTipoControlador {
 }
 
 export default ReclamoTipoControlador;
+
+
+//Falta testear
