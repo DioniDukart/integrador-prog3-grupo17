@@ -56,6 +56,13 @@ export default class UsuariosBD{
         return (resultado.length > 0) ? resultado[0] : null;
     }
 
+    buscarPorCorreo= async (correo)=>{
+        const consultaSql= "SELECT * FROM usuarios WHERE correoElectronico=? AND activo=1";
+        const [resultado] = await conexion.query(consultaSql, correo);
+
+        return (resultado.length > 0) ? resultado[0] : null;
+    }
+
     actualizar= async (idUsuario, usuario)=>{
         const consultaSql= "UPDATE usuarios SET ? WHERE idUsuario=?";
         

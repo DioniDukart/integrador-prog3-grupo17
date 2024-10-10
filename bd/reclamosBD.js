@@ -50,10 +50,17 @@ export default class ReclamosBD{
     */
 
     buscarPorId= async (idReclamo)=>{
-        const consultaSql= "SELECT * FROM reclamos WHERE idReclamo=?";
+        //console.log("Llega a BuscarPorId de reclamosBD");
+        
+        //const consultaSql= "SELECT * FROM reclamos WHERE idReclamo=?";
+        //const consultaSql= "SELECT r.idReclamo, r.asunto, r.descripcion, r.fechaCreado, r.fechaFinalizado, r.fechaCancelado, rE.descripcion FROM reclamos AS r INNER JOIN reclamos_estado AS rE ON rE.idReclamoEstado=r.idReclamoEstado WHERE r.idReclamo=? AND rE.activo=1";
+        const consultaSql= "SELECT r.idReclamo, r.asunto, r.descripcion, r.fechaCreado, r.fechaFinalizado, r.fechaCancelado, rE.descripcion AS estado, rT.descripcion AS tipo FROM reclamos AS r INNER JOIN reclamos_estado AS rE ON rE.idReclamoEstado=r.idReclamoEstado INNER JOIN reclamos_tipo AS rT ON rT.idReclamoTipo=r.idReclamoTipo WHERE r.idReclamo=? AND rE.activo=1 AND rT.activo=1";
+        
+        
         const [resultado] = await conexion.query(consultaSql, idReclamo);
-
+        
         return (resultado.length > 0) ? resultado[0] : null;
+        //return resultado;
     }
 
     actualizar= async (idReclamo, reclamo)=>{

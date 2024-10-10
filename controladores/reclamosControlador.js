@@ -105,6 +105,7 @@ export default class ReclamosControlador {
 
     //consulta un unico segun su id
     buscarPorId = async (req, res) => {
+        //console.log("Llega a BuscarPorId de reclamosControlador");
         const id = req.params.idReclamo;
 
         if (!id) {

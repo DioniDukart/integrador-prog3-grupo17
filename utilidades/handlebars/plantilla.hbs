@@ -6,19 +6,29 @@
     <title>Reclamo</title>
     <style>
         body {
-            
+            font-family: Arial, sans-serif;
+            background-color: white;
+            margin: 0;
+            padding: 0;
         }
 
         .container {
-
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: black;
         }
 
         h1 {
-
+            color: blue;
         }
 
         p {
+            color: white;
+        }
 
+        li {
+            color: purple
         }
     </style>
 </head>
@@ -27,8 +37,8 @@
     <div class="container">
         <h1>Notificación de actualizacion de reclamo.</h1>
         <h3>Estimado sr/a {{nombre}}:</h3>
-        <p> Nos comunicamos con usted para informarle que su reclamo n° {{nroReclamo}} ha pasado al estado <!--"{{estado}}"-->.</p>
-        <p>Por favor no responder este mensaje.</p>
+        <p> Nos comunicamos con usted para informarle que su reclamo n° {{nroReclamo}} ha pasado al estado: {{estado}}.</p>
+        <p>Por favor no responda este mensaje.</p>
     </div>
 </body>
 
