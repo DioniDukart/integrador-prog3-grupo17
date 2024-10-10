@@ -1,3 +1,4 @@
+import ReclamosServicios from "../servicios/reclamosServicios.js";
 
 export default class ReclamosControlador {
 
@@ -59,8 +60,9 @@ export default class ReclamosControlador {
 
             res.status(200).json(resultado);
         } catch (err) {
+            console.log(err);
             res.status(500).json({
-                mensaje: "Error"
+                mensaje: "Error interno en el servidor."
             });
         }
     }

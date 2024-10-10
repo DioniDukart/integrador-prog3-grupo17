@@ -5,11 +5,12 @@ const router = express.Router();
 
 const reclamosEstadosControlador = new ReclamosEstadosControlador();
 
-router.post("/reclamos-estados", reclamosEstadosControlador.crear);
-router.get("/reclamos-estados", reclamosEstadosControlador.buscarTodos);
-router.get("/reclamos-estados/:idReclamoEstado", reclamosEstadosControlador.buscarPorId);
-router.put("/reclamos-estados/:idReclamoEstado", reclamosEstadosControlador.actualizar);
-router.delete("/reclamos-estados/:idReclamoEstado", reclamosEstadosControlador.eliminar);
+//estas completan la url del app.use en index
+router.post("/", reclamosEstadosControlador.crear);
+router.get("/", reclamosEstadosControlador.buscarTodos);
+router.get("/:idReclamoEstado", reclamosEstadosControlador.buscarPorId);
+router.put("/:idReclamoEstado", reclamosEstadosControlador.actualizar);
+router.delete("/:idReclamoEstado", reclamosEstadosControlador.eliminar);
 /*
 router.patch();
 */

@@ -9,7 +9,7 @@ export default class ReclamosBD{
     };
 
     buscarTodos= async ()=>{
-        const consultaSql = "SELECT * FROM reclamos WHERE activo=1";
+        const consultaSql = "SELECT * FROM reclamos";
         const [resultado] = await conexion.query(consultaSql);
 
         return (resultado.length > 0) ? resultado[0] : null;
@@ -65,7 +65,8 @@ export default class ReclamosBD{
     }
 
     eliminar= async (idReclamo)=>{
-        const consultaSql= "UPDATE reclamos SET activo=0 WHERE idReclamo=?";
+        //const consultaSql= "UPDATE reclamos SET activo=0 WHERE idReclamo=?";//deberia cambiar el activo de reclamo_
+        const consultaSql= "DELETE FROM reclamos WHERE idReclamo=?";
         
         const [resultado]= await this.conexion.query(consultaSql, idReclamo);
 

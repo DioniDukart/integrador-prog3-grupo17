@@ -1,7 +1,8 @@
+import ReclamosEstadosServicios from "../servicios/reclamosEstadosServicios.js";
 
 export default class ReclamosEstadosControlador {
     constructor() {
-        this.reclamosEstadosServicios = new this.reclamosEstadosServicios();
+        this.reclamosEstadosServicios = new ReclamosEstadosServicios();
     }
 
     //crea estado de reclamo
