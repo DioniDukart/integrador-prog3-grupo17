@@ -5,9 +5,22 @@ import handlebars from "handlebars";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import {router as RECLAMOSESTADO} from "./v1/rutas/reclamosEstadosRutas.js";
+import reclamosTipoRoutes from './v1/rutas/reclamosTipoRutas.js';
+import bodyParser from 'body-parser';
 
-app.use("./v1/rutas/reclamosEstadosRutas", RECLAMOSESTADO);
+
+app.use(bodyParser.json());
+
+// Rutas
+app.use('/api/reclamosTipo', reclamosTipoRoutes);
+
+
+// Ruta básica de prueba
+app.get('/', (req, res) => {
+  res.send('API funcionando correctamente');
+});
+
+
 
 //import { conexion } from "./bd/conexionBD.js";
 

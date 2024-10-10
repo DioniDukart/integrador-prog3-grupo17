@@ -1,66 +1,74 @@
-const dbConnection = require('../config/dbConfig');
+import ReclamoTipoServicio from '../servicios/reclamoTipoServicio.js';
 
-// Obtener todos los tipos de reclamos
-exports.getAllReclamoTipos = async (req, res) => {
-    try {
-        const connection = await dbConnection.getConnection();
-        const [rows] = await connection.query('SELECT * FROM reclamostipo');
-        connection.release();
-        res.json(rows);
-    } catch (error) {
-        res.status(500).json({ error: 'Error al obtener los tipos de reclamos' });
+class ReclamoTipoControlador {
+    constructor() {
+        this.reclamoTipoServicio = new ReclamoTipoServicio();
     }
-};
 
-// Obtener un tipo de reclamo por ID
-exports.getReclamoTipoById = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const connection = await dbConnection.getConnection();
-        const [rows] = await connection.query('SELECT * FROM reclamostipo WHERE idReclamoTipo = ?', [id]);
-        connection.release();
-        res.json(rows[0]);
-    } catch (error) {
-        res.status(500).json({ error: 'Error al obtener el tipo de reclamo' });
+    // Buscar todos los tipos de reclamos activos
+    async buscarTodos(req, res) {
+        try {
+            const reclamosTipos = await this.reclamoTipoServicio.buscarTodos();
+            res.status(200).json(reclamosTipos);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     }
-};
 
-// Crear un nuevo tipo de reclamo
-exports.createReclamoTipo = async (req, res) => {
-    try {
-        const nuevoReclamoTipo = req.body;
-        const connection = await dbConnection.getConnection();
-        const [results] = await connection.query('INSERT INTO reclamostipo SET ?', nuevoReclamoTipo);
-        connection.release();
-        res.json({ message: 'Tipo de reclamo creado correctamente', id: results.insertId });
-    } catch (error) {
-        res.status(500).json({ error: 'Error al crear el tipo de reclamo' });
+    // Buscar un tipo de reclamo por ID
+    async buscarPorId(req, res) {
+        try {
+            const id = req.params.id;
+            const reclamoTipo = await this.reclamoTipoServicio.buscarPorId(id);
+            res.status(200).json(reclamoTipo);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     }
-};
 
-// Actualizar un tipo de reclamo existente
-exports.updateReclamoTipo = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const datosAActualizar = req.body;
-        const connection = await dbConnection.getConnection();
-        await connection.query('UPDATE reclamostipo SET ? WHERE idReclamoTipo = ?', [datosAActualizar, id]);
-        connection.release();
-        res.json({ message: 'Tipo de reclamo actualizado correctamente' });
-    } catch (error) {
-        res.status(500).json({ error: 'Error al actualizar el tipo de reclamo' });
+    // Crear un nuevo tipo de reclamo
+    async crear(req, res) {
+        try {
+            const nuevoReclamoTipo = await this.reclamoTipoServicio.crear(req.body);
+            res.status(201).json(nuevoReclamoTipo);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     }
-};
 
-// Eliminar un tipo de reclamo por ID
-exports.deleteReclamoTipo = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const connection = await dbConnection.getConnection();
-        await connection.query('DELETE FROM reclamostipo WHERE idReclamoTipo = ?', [id]);
-        connection.release();
-        res.json({ message: 'Tipo de reclamo eliminado correctamente' });
-    } catch (error) {
-        res.status(500).json({ error: 'Error al eliminar el tipo de reclamo' });
+    // Actualizar un tipo de reclamo por ID
+    async actualizar(req, res) {
+        try {
+            const id = req.params.id;
+            const reclamoTipoActualizado = await this.reclamoTipoServicio.actualizar(id, req.body);
+            res.status(200).json(reclamoTipoActualizado);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     }
-};
+
+    // Actualizar parcialmente un tipo de reclamo por ID
+    async actualizarParcialmente(req, res) {
+        try {
+            const id = req.params.id;
+            const datosActualizados = req.body;
+            const reclamoTipoActualizado = await this.reclamoTipoServicio.actualizarParcialmente(id, datosActualizados);
+            res.status(200).json(reclamoTipoActualizado);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    // Eliminar (desactivar) un tipo de reclamo
+    async eliminar(req, res) {
+        try {
+            const id = req.params.id;
+            await this.reclamoTipoServicio.eliminar(id);
+            res.status(204).send();
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+}
+
+export default ReclamoTipoControlador;
