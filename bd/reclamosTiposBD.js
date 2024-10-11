@@ -1,12 +1,11 @@
 import { conexion } from "./conexionBD.js";
 
-export default class ReclamosTipoBD {
-
+export default class ReclamosTiposBD {
     // Crear un nuevo reclamo tipo
     crear = async (reclamoTipoNuevo) => {
         const consultaSql = 'INSERT INTO reclamos_tipo SET ?';
         const [infoCreacion] = await conexion.query(consultaSql, reclamoTipoNuevo);
-        
+
         return this.buscarPorId(infoCreacion.insertId);
     };
 
@@ -15,7 +14,7 @@ export default class ReclamosTipoBD {
         const consultaSql = "SELECT * FROM reclamos_tipo WHERE activo=1";
         const [resultado] = await conexion.query(consultaSql);
 
-        return (resultado.length > 0) ? resultado : null;
+        return resultado;
     };
 
     // Buscar un tipo de reclamo por ID
@@ -23,13 +22,13 @@ export default class ReclamosTipoBD {
         const consultaSql = "SELECT * FROM reclamos_tipo WHERE idReclamoTipo=? AND activo=1";
         const [resultado] = await conexion.query(consultaSql, [idReclamoTipo]);
 
-        return (resultado.length > 0) ? resultado[0] : null;
+        return resultado;
     };
 
     // Actualizar un tipo de reclamo
     actualizar = async (idReclamoTipo, reclamoTipoActualizado) => {
         const consultaSql = "UPDATE reclamos_tipo SET ? WHERE idReclamoTipo=?";
-        
+
         await conexion.query(consultaSql, [reclamoTipoActualizado, idReclamoTipo]);
 
         return this.buscarPorId(idReclamoTipo);
@@ -38,7 +37,7 @@ export default class ReclamosTipoBD {
     // Eliminar (desactivar) un tipo de reclamo
     eliminar = async (idReclamoTipo) => {
         const consultaSql = "UPDATE reclamos_tipo SET activo=0 WHERE idReclamoTipo=?";
-        
+
         const [resultado] = await conexion.query(consultaSql, [idReclamoTipo]);
 
         return resultado;

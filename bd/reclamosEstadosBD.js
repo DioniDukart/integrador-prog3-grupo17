@@ -24,7 +24,7 @@ export default class ReclamosEstadosBD{
         const consultaSql= "SELECT * FROM reclamos_estado WHERE idReclamoEstado=? AND activo=1;";
         const [resultado] = await conexion.query(consultaSql, idReclamoEstado);
 
-        return (resultado.length > 0) ? resultado[0] : null;
+        return resultado;
     };
 
     actualizar= async (idReclamoEstado, datos)=>{

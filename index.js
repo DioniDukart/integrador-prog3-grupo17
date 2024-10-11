@@ -25,15 +25,16 @@ app.listen(puerto, () => {
 
 import { router as v1Reclamos}  from "./v1/rutas/reclamosRutas.js";
 app.use("/api/v1/reclamos", v1Reclamos);
-/*
+
 import {router as v1ReclamosEstados} from "./v1/rutas/reclamosEstadosRutas.js";
 app.use("/api/v1/reclamos-estados", v1ReclamosEstados);
 
 import {router as v1Usuarios} from "./v1/rutas/usuariosRutas.js";
 app.use("/api/v1/usuarios", v1Usuarios);
-
+/*
 import {router as v1UsuariosTipos} from "./v1/rutas/usuariosTiposRutas.js";
 app.use("/api/v1/usuarios-tipos", v1UsuariosTipos);
+*/
 
 import {router as v1Oficinas} from "./v1/rutas/oficinasRutas.js";
 app.use("/api/v1/oficinas", v1Oficinas);
@@ -43,7 +44,7 @@ app.use("/api/v1/usuarios-oficinas", v1UsuariosOficinas);
 
 import {router as v1ReclamosTipos} from "./v1/rutas/reclamosTiposRutas.js";
 app.use("/api/v1/reclamos-tipos", v1ReclamosTipos);
-*/
+
 
 
 //mail
@@ -59,9 +60,9 @@ app.post("/notificacion", async (req, res) => {
 
     //info con la que se rellena la plantilla handlebars
     const datos = {
-        nombre: "nombre1",
-        nroReclamo: "reclamo1",
-        estado: "estado1"//esto ver a futuro
+        nombre: "nombre",
+        nroReclamo: "reclamo",
+        estado: "estado"//esto ver a futuro
     };
 
     const htmlCorreo = plantillaHandlebars(datos);

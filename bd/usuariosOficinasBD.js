@@ -1,6 +1,6 @@
 import { conexion } from "./conexionBD.js";
 
-export default class UsuariosOficinaBD {
+export default class UsuariosOficinasBD {
 
     // Crear un nuevo usuario y asociarlo a una oficina
     crear = async (usuarioNuevo) => {
@@ -15,7 +15,7 @@ export default class UsuariosOficinaBD {
         const consultaSql = "SELECT * FROM usuarios_oficinas WHERE activo=1";
         const [resultado] = await conexion.query(consultaSql);
 
-        return (resultado.length > 0) ? resultado : null;
+        return resultado;
     };
 
     // Buscar un usuario y oficina por ID
@@ -23,7 +23,7 @@ export default class UsuariosOficinaBD {
         const consultaSql = "SELECT * FROM usuarios_oficinas WHERE idUsuarioOficina=? AND activo=1";
         const [resultado] = await conexion.query(consultaSql, [idUsuarioOficina]);
 
-        return (resultado.length > 0) ? resultado[0] : null;
+        return resultado;
     };
 
     // Actualizar un usuario y oficina

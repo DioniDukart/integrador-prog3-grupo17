@@ -10,9 +10,7 @@ router.get("/", oficinasControlador.buscarTodas);
 router.get("/:idOficina", oficinasControlador.buscarPorId);
 router.post("/", oficinasControlador.crear);
 router.put("/:idOficina", oficinasControlador.actualizar);
-router.patch("/:idOficina", oficinasControlador.actualizarParcialmente);
+//router.patch("/:idOficina", oficinasControlador.actualizarParcialmente);
 router.delete("/:idOficina", oficinasControlador.eliminar);
 
-
 export { router };
-

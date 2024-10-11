@@ -1,3 +1,5 @@
+import OficinasServicios from "../servicios/oficinasServicios.js";
+
 export default class OficinasControlador {
     constructor() {
         this.oficinasServicios = new OficinasServicios();
@@ -11,7 +13,7 @@ export default class OficinasControlador {
             // Verifico
             if (!nombre || !idReclamoTipo || activo === undefined) {
                 return res.status(400).json({
-                    mensaje: "Falta/n parámetro/s "
+                    mensaje: "Falta/n parámetro/s"
                 });
             }
 

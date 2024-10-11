@@ -125,12 +125,14 @@ export default class ReclamosControlador {
             res.status(200).json(resultado);
              */
             const resultado = await this.reclamosServicios.buscarPorId(id);
-
+            
+            //esto me tira el servidor si result viene vacio?
             if (!resultado) {
                 res.status(404).json({
                     mensaje: "No se encontro resultado."
                 });
             }
+            
             res.status(200).json(resultado);
 
         } catch (err) {
