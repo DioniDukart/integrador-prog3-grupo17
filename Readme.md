@@ -1,4 +1,4 @@
-# :star2: **Integrantes del Proyecto** :star2:
+# :star2: **Integrantes** :star2:
 
 > **Estefania Altamirano**
 >
