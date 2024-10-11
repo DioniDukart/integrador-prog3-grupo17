@@ -12,7 +12,8 @@ export default class UsuariosBD{
         const consultaSql = "SELECT * FROM usuarios WHERE activo=1";
         const [resultado] = await conexion.query(consultaSql);
 
-        return (resultado.length > 0) ? resultado[0] : null;
+        //return (resultado.length > 0) ? resultado[0] : null;//me deja solo el primero
+        return resultado;
     };
 
     /*
@@ -53,7 +54,14 @@ export default class UsuariosBD{
         const consultaSql= "SELECT * FROM usuarios WHERE idUsuario=? AND activo=1";
         const [resultado] = await conexion.query(consultaSql, idUsuario);
 
-        return (resultado.length > 0) ? resultado[0] : null;
+        return resultado;
+    }
+
+    buscarPorCorreo= async (correo)=>{
+        const consultaSql= "SELECT * FROM usuarios WHERE correoElectronico=? AND activo=1";
+        const [resultado] = await conexion.query(consultaSql, correo);
+
+        return resultado;
     }
 
     actualizar= async (idUsuario, usuario)=>{

@@ -1,7 +1,8 @@
+import ReclamosEstadosServicios from "../servicios/reclamosEstadosServicios.js";
 
 export default class ReclamosEstadosControlador {
     constructor() {
-        this.reclamosEstadosServicios = new this.reclamosEstadosServicios();
+        this.reclamosEstadosServicios = new ReclamosEstadosServicios();
     }
 
     //crea estado de reclamo
@@ -108,7 +109,7 @@ export default class ReclamosEstadosControlador {
     buscarTodos = async (req, res) => {
         try {
             //con los corchetes "desestructuro" la informacion, quedandome asi los datos sin la metadata de la consulta hecha
-            const [resultado] = await this.reclamosEstadosServicios.buscarTodos();
+            const resultado = await this.reclamosEstadosServicios.buscarTodos();
 
             //res.status(200).send({'estado':true});//alternativa?
             //res.status(200).json({ estado: true, data: resultado});
@@ -123,7 +124,7 @@ export default class ReclamosEstadosControlador {
 
     buscarPorId = async (req, res) => {
         try {
-            const id = req.params.idEstadoReclamo;
+            const id = req.params.idReclamoEstado;
 
             const resultado= await this.reclamosEstadosServicios.buscarPorId(id);
 

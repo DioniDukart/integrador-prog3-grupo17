@@ -9,17 +9,17 @@ export default class OficinasServicios {
         return this.oficinasBD.crear(oficina);
     };
 
-    
+
     buscarTodas = () => {
         return this.oficinasBD.buscarTodas();
     };
 
-   
+
     buscarPorId = (idOficina) => {
         return this.oficinasBD.buscarPorId(idOficina);
     };
 
-   
+
     actualizar = (idOficina, datos) => {
         return this.oficinasBD.actualizar(idOficina, datos);
     };

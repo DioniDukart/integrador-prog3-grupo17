@@ -33,6 +33,7 @@ export default class ReclamosServicios {
     */
 
     buscarPorId= (id)=>{
+        //console.log("Llega a BuscarPorId de reclamosServicios");
         return this.reclamosBD.buscarPorId(id);
     }
 

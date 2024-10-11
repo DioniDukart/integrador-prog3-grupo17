@@ -1,3 +1,4 @@
+import ReclamosServicios from "../servicios/reclamosServicios.js";
 
 export default class ReclamosControlador {
 
@@ -59,8 +60,9 @@ export default class ReclamosControlador {
 
             res.status(200).json(resultado);
         } catch (err) {
+            console.log(err);
             res.status(500).json({
-                mensaje: "Error"
+                mensaje: "Error interno en el servidor."
             });
         }
     }
@@ -103,6 +105,7 @@ export default class ReclamosControlador {
 
     //consulta un unico segun su id
     buscarPorId = async (req, res) => {
+        //console.log("Llega a BuscarPorId de reclamosControlador");
         const id = req.params.idReclamo;
 
         if (!id) {
@@ -122,12 +125,14 @@ export default class ReclamosControlador {
             res.status(200).json(resultado);
              */
             const resultado = await this.reclamosServicios.buscarPorId(id);
-
+            
+            //esto me tira el servidor si result viene vacio?
             if (!resultado) {
                 res.status(404).json({
                     mensaje: "No se encontro resultado."
                 });
             }
+            
             res.status(200).json(resultado);
 
         } catch (err) {

@@ -1,5 +1,6 @@
-export default class UsuariosControlador {
+import UsuariosServicios from "../servicios/usuariosServicios.js";
 
+export default class UsuariosControlador {
     constructor() {
         this.usuariosServicios = new UsuariosServicios();
     }

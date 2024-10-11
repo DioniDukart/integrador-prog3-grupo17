@@ -1,27 +1,27 @@
 import UsuariosBD from "../bd/usuariosBD.js";
 
 export default class UsuariosServicios {
-    constructor(){
-        this.usuariosBD= new UsuariosBD();
+    constructor() {
+        this.usuariosBD = new UsuariosBD();
     }
 
-    crear=(usuario)=>{
+    crear = (usuario) => {
         return this.usuariosBD.crear(usuario);
     };
 
-    buscarTodos=()=>{
+    buscarTodos = () => {
         return this.usuariosBD.buscarTodos();
     };
 
-    buscarPorId=(idUsuario)=>{
+    buscarPorId = (idUsuario) => {
         return this.usuariosBD.buscarPorId(idUsuario);
     };
 
-    actualizar=(idUsuario, datos)=>{
+    actualizar = (idUsuario, datos) => {
         return this.usuariosBD.actualizar(idUsuario, datos);
     };
 
-    eliminar=(idUsuario)=>{
+    eliminar = (idUsuario) => {
         return this.usuariosBD.eliminar(idUsuario);
     };
 }

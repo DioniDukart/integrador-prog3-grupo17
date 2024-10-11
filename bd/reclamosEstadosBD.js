@@ -24,20 +24,20 @@ export default class ReclamosEstadosBD{
         const consultaSql= "SELECT * FROM reclamos_estado WHERE idReclamoEstado=? AND activo=1;";
         const [resultado] = await conexion.query(consultaSql, idReclamoEstado);
 
-        return (resultado.length > 0) ? resultado[0] : null;
+        return resultado;
     };
 
     actualizar= async (idReclamoEstado, datos)=>{
-        const consultaSql= "UPDATE reclamos_estado SET ? WHERE idReclamo=?";
+        const consultaSql= "UPDATE reclamos_estado SET ? WHERE idReclamoEstado=?";
         await this.conexion.query(consultaSql, [datos, idReclamoEstado]);
 
         return this.buscarPorId(idReclamoEstado);
     };
 
-    eliminar= async (idReclamo)=>{
-        const consultaSql= "UPDATE reclamos SET activo=0 WHERE idReclamo=?";
+    eliminar= async (idReclamoEstado)=>{
+        const consultaSql= "UPDATE reclamos_estado SET activo=0 WHERE idReclamoEstado=?";
         
-        const [resultado]= await this.conexion.query(consultaSql, idReclamo);
+        const [resultado]= await this.conexion.query(consultaSql, idReclamoEstado);
 
         return resultado;
     };

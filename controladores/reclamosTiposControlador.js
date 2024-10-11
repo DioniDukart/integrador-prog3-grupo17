@@ -1,14 +1,14 @@
-import ReclamoTipoServicio from '../servicios/reclamoTipoServicio.js';
+import ReclamosTiposServicios from "../servicios/reclamosTiposServicios.js";
 
-class ReclamoTipoControlador {
+export default class ReclamosTiposControlador {
     constructor() {
-        this.reclamoTipoServicio = new ReclamoTipoServicio();
+        this.reclamosTiposServicios = new ReclamosTiposServicios();
     }
 
     // Buscar todos los tipos de reclamos activos
-    async buscarTodos(req, res) {
+    buscarTodos = async (req, res) => {
         try {
-            const reclamosTipos = await this.reclamoTipoServicio.buscarTodos();
+            const reclamosTipos = await this.reclamosTiposServicios.buscarTodos();
             res.status(200).json(reclamosTipos);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -16,10 +16,11 @@ class ReclamoTipoControlador {
     }
 
     // Buscar un tipo de reclamo por ID
-    async buscarPorId(req, res) {
+    buscarPorId = async (req, res) => {
         try {
             const id = req.params.id;
-            const reclamoTipo = await this.reclamoTipoServicio.buscarPorId(id);
+            const reclamoTipo = await this.reclamosTiposServicios.buscarPorId(id);
+
             res.status(200).json(reclamoTipo);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -27,9 +28,9 @@ class ReclamoTipoControlador {
     }
 
     // Crear un nuevo tipo de reclamo
-    async crear(req, res) {
+    crear = async (req, res) => {
         try {
-            const nuevoReclamoTipo = await this.reclamoTipoServicio.crear(req.body);
+            const nuevoReclamoTipo = await this.reclamosTiposServicios.crear(req.body);
             res.status(201).json(nuevoReclamoTipo);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -37,41 +38,39 @@ class ReclamoTipoControlador {
     }
 
     // Actualizar un tipo de reclamo por ID
-    async actualizar(req, res) {
+    actualizar = async (req, res) => {
         try {
             const id = req.params.id;
-            const reclamoTipoActualizado = await this.reclamoTipoServicio.actualizar(id, req.body);
+            const reclamoTipoActualizado = await this.reclamosTiposServicios.actualizar(id, req.body);
             res.status(200).json(reclamoTipoActualizado);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
     }
-
+    /*
     // Actualizar parcialmente un tipo de reclamo por ID
-    async actualizarParcialmente(req, res) {
+    actualizarParcialmente(req, res)=> {
         try {
             const id = req.params.id;
             const datosActualizados = req.body;
-            const reclamoTipoActualizado = await this.reclamoTipoServicio.actualizarParcialmente(id, datosActualizados);
+            const reclamoTipoActualizado = await this.reclamosTiposServicios.actualizarParcialmente(id, datosActualizados);
             res.status(200).json(reclamoTipoActualizado);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
     }
-
+    */
     // Eliminar (desactivar) un tipo de reclamo
-    async eliminar(req, res) {
+    eliminar = async (req, res) => {
         try {
             const id = req.params.id;
-            await this.reclamoTipoServicio.eliminar(id);
+            const res = this.reclamosTiposServicios.eliminar(id);
             res.status(204).send();
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
     }
 }
-
-export default ReclamoTipoControlador;
 
 
 //Falta testear
