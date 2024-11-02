@@ -10,7 +10,7 @@ router.get('/:id', reclamosTiposControlador.buscarPorId);
 router.post('/', reclamosTiposControlador.crear);
 router.put('/:id', reclamosTiposControlador.actualizar);
 //router.patch('/:id', reclamosTiposControlador.actualizarParcialmente);
-router.delete('/:id', reclamosTiposControlador.eliminar);
+router.patch('/:id', reclamosTiposControlador.eliminar);
 
 export { router };
 

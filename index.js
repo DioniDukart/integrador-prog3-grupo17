@@ -5,7 +5,11 @@ import handlebars from "handlebars";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import bodyParser from 'body-parser';
+
+import cors from "cors";
+
+import passport from "passport";
+import { estrategia, validacion } from "./config/passport.js"
 
 const app = express();
 dotenv.config();
@@ -16,38 +20,104 @@ app.use(
     //"lo que llegue en el body de las solicitud procesarlo en formato json"
     express.json() //esto es como pasar una callback?
 );
+/*
+//redundante respecto a express.json
+import bodyParser from 'body-parser';
+app.use(
+    bodyParser.json()
+);
+ */
 
-app.use(bodyParser.json());
+app.use(cors());
 
-app.listen(puerto, () => {
-    console.log(`Hola puerto ${puerto}!`);
-});
+passport.use(estrategia);
+passport.use(validacion);
 
-import { router as v1Reclamos}  from "./v1/rutas/reclamosRutas.js";
+app.use(passport.initialize());
+
+
+
+
+import swaggerUi from "swagger-ui-express";
+import swaggerJsdoc from "swagger-jsdoc";
+
+
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'API REST - Integrador Final PROG3- Grupo 17 2024',
+            version: '1.0.0',
+            description: 'API REST de gestión de reclamos.'
+        },
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT'
+                }
+            }
+        },
+        security: [
+            {
+                bearerAuth: []
+            }
+        ],
+        servers: [
+            {
+                url: 'http://localhost:3555'
+            }
+        ]
+    },
+    apis: ['./v1/rutas/*.js']
+};
+
+//genera la especificacion de swagger
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+
+
+import { router as v1Reclamos } from "./v1/rutas/reclamosRutas.js";
 app.use("/api/v1/reclamos", v1Reclamos);
+//esto pide autenticacion (sea cual sea el tipo de usuario) para el acceso a la ruta
+//app.use("/api/v1/reclamos", passport.authenticate("jwt", { session:false }), v1Reclamos);
 
-import {router as v1ReclamosEstados} from "./v1/rutas/reclamosEstadosRutas.js";
+import { router as v1ReclamosEstados } from "./v1/rutas/reclamosEstadosRutas.js";
 app.use("/api/v1/reclamos-estados", v1ReclamosEstados);
 
-import {router as v1Usuarios} from "./v1/rutas/usuariosRutas.js";
+import { router as v1Usuarios } from "./v1/rutas/usuariosRutas.js";
 app.use("/api/v1/usuarios", v1Usuarios);
+
 /*
 import {router as v1UsuariosTipos} from "./v1/rutas/usuariosTiposRutas.js";
 app.use("/api/v1/usuarios-tipos", v1UsuariosTipos);
 */
 
-import {router as v1Oficinas} from "./v1/rutas/oficinasRutas.js";
+import { router as v1Oficinas } from "./v1/rutas/oficinasRutas.js";
 app.use("/api/v1/oficinas", v1Oficinas);
 
-import {router as v1UsuariosOficinas} from "./v1/rutas/usuariosOficinasRutas.js";
+import { router as v1UsuariosOficinas } from "./v1/rutas/usuariosOficinasRutas.js";
 app.use("/api/v1/usuarios-oficinas", v1UsuariosOficinas);
 
-import {router as v1ReclamosTipos} from "./v1/rutas/reclamosTiposRutas.js";
+import { router as v1ReclamosTipos } from "./v1/rutas/reclamosTiposRutas.js";
 app.use("/api/v1/reclamos-tipos", v1ReclamosTipos);
 
 
+import { router as v1Autenticacion } from "./v1/rutas/autenticacionRutas.js";
+app.use("/api/v1/autenticacion", v1Autenticacion);
 
+
+//"swagger-ui-express sirve la interfaz Swagger"
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+
+app.listen(puerto, () => {
+    console.log(`Hola puerto ${puerto}!`);
+});
+
+/* 
 //mail
+//ya refactorizado
 app.post("/notificacion", async (req, res) => {
     const correoUsuario = req.body.correoElectronico; // "correoElectronico" lit es como viene en la solicitud http
 
@@ -92,3 +162,4 @@ app.post("/notificacion", async (req, res) => {
     });
 
 });
+*/

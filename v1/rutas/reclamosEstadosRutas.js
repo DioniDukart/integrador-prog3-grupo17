@@ -10,8 +10,8 @@ router.post("/", reclamosEstadosControlador.crear);
 router.get("/", reclamosEstadosControlador.buscarTodos);
 router.get("/:idReclamoEstado", reclamosEstadosControlador.buscarPorId);
 router.put("/:idReclamoEstado", reclamosEstadosControlador.actualizar);
-router.delete("/:idReclamoEstado", reclamosEstadosControlador.eliminar);
+router.patch("/:idReclamoEstado", reclamosEstadosControlador.eliminar);
 /*
-router.patch();
+router.patch("/:idReclamoEstado", reclamosEstadosControlador.actualizarParcialmente);
 */
 export { router };

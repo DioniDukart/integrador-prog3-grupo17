@@ -10,9 +10,9 @@ router.post("/", usuariosControlador.crear);
 router.get("/", usuariosControlador.buscarTodos);
 router.get("/:idUsuario", usuariosControlador.buscarPorId);
 router.put("/:idUsuario", usuariosControlador.actualizar);
-router.delete("/:idUsuario", usuariosControlador.eliminar);
+router.patch("/:idUsuario", usuariosControlador.eliminar);
 /*
-router.patch();
+router.patch("/:idUsuario", usuariosControlador.actualizarParcialmente);
 */
 
 export { router };
