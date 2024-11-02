@@ -66,7 +66,7 @@ export default class ReclamosControlador {
             });
         }
     }
-    
+
     /* 
     //consulta todos CON PAGINACION
     buscarTodos = async (req, res) => {
@@ -125,14 +125,14 @@ export default class ReclamosControlador {
             res.status(200).json(resultado);
              */
             const resultado = await this.reclamosServicios.buscarPorId(id);
-            
+
             //esto me tira el servidor si result viene vacio?
             if (!resultado) {
                 res.status(404).json({
                     mensaje: "No se encontro resultado."
                 });
             }
-            
+
             res.status(200).json(resultado);
 
         } catch (err) {
@@ -148,7 +148,7 @@ export default class ReclamosControlador {
 
         const cuerpo = req.body;
 
-        if (id===null || id===undefined) {
+        if (id === null || id === undefined) {
             res.status(404).json({ status: "Fallo", data: { error: "El parametro no puede ser vacio." } });
         }
         if (!this.buscarPorId(id)) {//seria mas conveniente llamar otra capa?
@@ -188,22 +188,85 @@ export default class ReclamosControlador {
         }
 
         try {
-            const resultado= await this.reclamosServicios.eliminar(id);
-            
+            const resultado = await this.reclamosServicios.eliminar(id);
+
             //res.status(204).send();
             if (resultado.affectedRows === 0) {
                 res.status(404).json({
                     mensaje: "No se pudo eliminar."
                 });
             }
-            
+
             res.status(204).json({
                 mensaje: `Reclamo ${id} eliminado.`
             });
-            
+
         } catch (error) {
             res.status(500).json({
                 mensaje: "Error"
+            });
+        }
+    }
+
+    atenderReclamo = async (req, res) => {
+        try {
+            const idReclamo = req.params.idReclamo;
+            const idReclamoEstado = req.body.idReclamoEstado;
+
+            if (idReclamoEstado === undefined) {
+                return res.status(400).send({
+                    estado: "Falla",
+                    mensaje: "Falta el id del estado de reclamo."
+                })
+            }
+
+            const dato = {
+                idReclamoEstado
+            }
+
+            const reclamoModificado = await this.reclamosServicios.notificarCambio(idReclamo, dato);
+
+            if (reclamoModificado.estado) {
+                res.status(200).send({ estado: "OK", mensaje: reclamoModificado.mensaje });
+            } else {
+                res.status(404).send({ estado: "Falla", mensaje: reclamoModificado.mensaje });
+            }
+
+        } catch (error) {
+            res.status(500).send({
+                estado: "Falla", mensaje: "Error interno en servidor."
+            });
+        }
+    }
+
+    cancelarReclamo = async (req, res) => {
+        try {
+            const idReclamo = req.params.idReclamo;
+
+            // verificar que se reciba el idReclamo
+            if (idReclamo === undefined) {
+                return res.status(400).send({
+                    estado: "Falla",
+                    mensaje: "Falta el id del reclamo."
+                })
+            }
+
+            //creo objeto con id de "cancelado" y la fecha actual
+            const dato = {
+                idReclamoEstado: 3,
+                fechaCancelado: new Date().toISOString().slice(0, 19).replace('T', ' ')  // yyyy-mm-dd hh:mm:ss
+            };
+
+            const reclamoCancelado = await this.reclamosServicios.cancelarReclamo(idReclamo, dato);
+
+            if (reclamoCancelado.estado) {
+                res.status(200).send({ estado: "OK", mensaje: reclamoCancelado.mensaje });
+            } else {
+                res.status(404).send({ estado: "Falla", mensaje: reclamoCancelado.mensaje });
+            }
+        } catch (error) {
+            res.status(500).send({
+                estado: "Falla", mensaje: "Error interno en servidor."
             });
         }
     }

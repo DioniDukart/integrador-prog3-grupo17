@@ -1,15 +1,16 @@
 import { conexion } from "./conexionBD.js";
 
-export default class UsuariosBD{
-    crear= async (usuarioNuevo)=>{
-        const consultaSql = 'INSERT INTO usuarios SET ?';
+export default class UsuariosBD {
+    crear = async (usuarioNuevo) => {
+        const consultaSql = 'INSERT INTO usuarios SET ?;';
         const [infoCreacion] = await conexion.query(consultaSql, usuarioNuevo);
-        
+
         return this.buscarPorId(infoCreacion[0].insertId);
     };
 
-    buscarTodos= async ()=>{
-        const consultaSql = "SELECT * FROM usuarios WHERE activo=1";
+    //usuario= {idUsuario, nombre, apellido, correoElectronico, contrasenia, idTipoUsuario, imagen, activo}
+    buscarTodos = async () => {
+        const consultaSql = "SELECT * FROM usuarios WHERE activo=1;";
         const [resultado] = await conexion.query(consultaSql);
 
         //return (resultado.length > 0) ? resultado[0] : null;//me deja solo el primero
@@ -49,35 +50,43 @@ export default class UsuariosBD{
 
     }
     */
-
-    buscarPorId= async (idUsuario)=>{
-        const consultaSql= "SELECT * FROM usuarios WHERE idUsuario=? AND activo=1";
+    //SELECT CONCAT(u.nombre, " ", u.apellido) AS usuario, u.correoElectronico, INNER JOIN usuarios_tipo ON 
+    //AS FROM usuarios WHERE idUsuario=? AND activo=1;
+    buscarPorId = async (idUsuario) => {
+        const consultaSql = "SELECT * FROM usuarios WHERE idUsuario=? AND activo=1;";
         const [resultado] = await conexion.query(consultaSql, idUsuario);
 
         return resultado;
     }
 
-    buscarPorCorreo= async (correo)=>{
-        const consultaSql= "SELECT * FROM usuarios WHERE correoElectronico=? AND activo=1";
+    buscarLogin = async (idUsuario, contrasenia) => {
+        const consultaSql = `SELECT u.idUsuario, CONCAT(u.nombre, " ", u.apellido) as usuario, u.idUsuarioTipo FROM usuarios AS u WHERE u.activo=1 AND u.idUsuario=? AND u.contrasenia=SHA(?,256);`;
+        const [resultado] = await conexion.query(consultaSql, [idUsuario, contrasenia]);
+
+        return resultado;
+    }
+
+    buscarPorCorreo = async (correo) => {
+        const consultaSql = "SELECT * FROM usuarios WHERE correoElectronico=? AND activo=1;";
         const [resultado] = await conexion.query(consultaSql, correo);
 
         return resultado;
     }
 
-    actualizar= async (idUsuario, usuario)=>{
-        const consultaSql= "UPDATE usuarios SET ? WHERE idUsuario=?";
-        
+    actualizar = async (idUsuario, usuario) => {
+        const consultaSql = "UPDATE usuarios SET ? WHERE idUsuario=?;";
+
         await this.conexion.query(consultaSql, [usuario, idUsuario]);
 
         return this.buscarPorId(idUsuario);
     }
 
-    eliminar= async (idUsuario)=>{
-        const consultaSql= "UPDATE reclamos SET activo=0 WHERE idUsuario=?";
-        
-        const [resultado]= await this.conexion.query(consultaSql, idUsuario);
+    eliminar = async (idUsuario) => {
+        const consultaSql = "UPDATE reclamos SET activo=0 WHERE idUsuario=?;";
+
+        const [resultado] = await this.conexion.query(consultaSql, idUsuario);
 
         return resultado;
     }
-    
+
 }

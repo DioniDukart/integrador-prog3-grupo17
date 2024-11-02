@@ -1,6 +1,6 @@
 import UsuariosOficinasBD from '../bd/UsuariosOficinasBD.js';
 
-class UsuariosOficinasServicios {
+export default class UsuariosOficinasServicios {
     constructor() {
         this.usuariosOficinasBD = new UsuariosOficinasBD();
     }
@@ -33,5 +33,3 @@ class UsuariosOficinasServicios {
         return await usuariosOficinasBD.eliminar(id);
     }
 }
-
-export default UsuariosOficinasServicios;

@@ -1,11 +1,11 @@
 import UsuariosOficinasServicios from '../servicios/usuariosOficinasServicios.js';
 
-class UsuariosOficinasControlador {
+export default class UsuariosOficinasControlador {
     constructor() {
         this.usuariosOficinasServicios = new UsuariosOficinasServicios();
     }
 
-    async buscarTodos(req, res) {
+    buscarTodos = async (req, res) => {
         try {
             const usuariosOficinas = await this.usuariosOficinasServicios.buscarTodos();
             res.status(200).json(usuariosOficinas);
@@ -14,7 +14,7 @@ class UsuariosOficinasControlador {
         }
     }
 
-    async buscarPorId(req, res) {
+    buscarPorId = async (req, res) => {
         try {
             const id = req.params.id;
             const usuarioOficina = await this.usuariosOficinasServicios.buscarPorId(id);
@@ -24,7 +24,7 @@ class UsuariosOficinasControlador {
         }
     }
 
-    async crear(req, res) {
+    crear = async (req, res) => {
         try {
             const nuevoUsuariosOficina = await this.usuariosOficinasServicios.crear(req.body);
             res.status(201).json(nuevoUsuariosOficina);
@@ -33,7 +33,7 @@ class UsuariosOficinasControlador {
         }
     }
 
-    async actualizar(req, res) {
+    actualizar = async (req, res) => {
         try {
             const id = req.params.id;
             const usuarioOficinaActualizado = await this.usuariosOficinasServicios.actualizar(id, req.body);
@@ -43,7 +43,7 @@ class UsuariosOficinasControlador {
         }
     }
     /* 
-    async actualizarParcialmente(req, res) {
+    actualizarParcialmente(req, res) {
         try {
             const id = req.params.id;
             const datosActualizados = req.body;
@@ -54,7 +54,7 @@ class UsuariosOficinasControlador {
         }
     }
     */
-    async eliminar(req, res) {
+    eliminar = async (req, res) => {
         try {
             const id = req.params.id;
             await this.usuariosOficinasServicios.eliminar(id);
@@ -65,4 +65,3 @@ class UsuariosOficinasControlador {
     }
 }
 
-export default UsuariosOficinasControlador;
