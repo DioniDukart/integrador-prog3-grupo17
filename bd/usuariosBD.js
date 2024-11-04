@@ -13,7 +13,6 @@ export default class UsuariosBD {
         const consultaSql = "SELECT * FROM usuarios WHERE activo=1;";
         const [resultado] = await conexion.query(consultaSql);
 
-        //return (resultado.length > 0) ? resultado[0] : null;//me deja solo el primero
         return resultado;
     };
 
@@ -56,14 +55,16 @@ export default class UsuariosBD {
         const consultaSql = "SELECT * FROM usuarios WHERE idUsuario=? AND activo=1;";
         const [resultado] = await conexion.query(consultaSql, idUsuario);
 
+        //return (resultado.length > 0) ? resultado[0] : null;//me deja solo el primero
         return resultado;
     }
 
-    buscarLogin = async (idUsuario, contrasenia) => {
-        const consultaSql = `SELECT u.idUsuario, CONCAT(u.nombre, " ", u.apellido) as usuario, u.idUsuarioTipo FROM usuarios AS u WHERE u.activo=1 AND u.idUsuario=? AND u.contrasenia=SHA(?,256);`;
-        const [resultado] = await conexion.query(consultaSql, [idUsuario, contrasenia]);
+    buscarLogin = async (correoElectronico, contrasenia) => {
+        const consultaSql = `SELECT u.idUsuario, CONCAT(u.nombre, " ", u.apellido) as usuario, u.idTipoUsuario FROM usuarios AS u WHERE u.activo=1 AND u.correoElectronico=? AND u.contrasenia=SHA2(?,256);`;
+        const [resultado] = await conexion.query(consultaSql, [correoElectronico, contrasenia]);
 
-        return resultado;
+        return resultado[0];
+        //return resultado;
     }
 
     buscarPorCorreo = async (correo) => {
@@ -81,10 +82,37 @@ export default class UsuariosBD {
         return this.buscarPorId(idUsuario);
     }
 
+
     eliminar = async (idUsuario) => {
         const consultaSql = "UPDATE reclamos SET activo=0 WHERE idUsuario=?;";
 
         const [resultado] = await this.conexion.query(consultaSql, idUsuario);
+
+        return resultado;
+    }
+
+
+
+
+    buscarEmpleadosTodos = async ()=>{
+        const consultaSql = "SELECT * FROM usuarios WHERE activo=1 AND idTipoUsuario=2;";
+        const [resultado] = await conexion.query(consultaSql);
+        console.log(resultado);
+        return resultado;
+    }
+
+    //SELECT * FROM usuarios WHERE idUsuario NOT IN (SELECT idUsuario FROM usuarios_oficinas) AND idTipoUsuario=2; 
+    //SELECT usuarios.* FROM usuarios LEFT JOIN usuarios_oficinas ON usuarios.idUsuario = usuarios_oficinas.idUsuario WHERE usuarios_oficinas.idUsuario IS NULL AND usuarios.idTipoUsuario=2;
+    buscarEmpleadosSinOficina = async ()=>{
+        const consultaSql = "SELECT usuarios.* FROM usuarios LEFT JOIN usuarios_oficinas ON usuarios.idUsuario = usuarios_oficinas.idUsuario WHERE usuarios_oficinas.idUsuario IS NULL AND usuarios.activo=1 AND usuarios.idTipoUsuario=2;";
+        const [resultado] = await conexion.query(consultaSql);
+
+        return resultado;
+    }
+    
+    buscarEmpleadosConOficina = async ()=>{
+        const consultaSql = "SELECT usuarios.* FROM usuarios INNER JOIN usuarios_oficinas ON usuarios.idUsuario = usuarios_oficinas.idUsuario WHERE usuarios.activo=1 AND  usuarios.idTipoUsuario=2;";
+        const [resultado] = await conexion.query(consultaSql);
 
         return resultado;
     }

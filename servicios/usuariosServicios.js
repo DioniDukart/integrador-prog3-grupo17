@@ -17,11 +17,28 @@ export default class UsuariosServicios {
         return this.usuariosBD.buscarPorId(idUsuario);
     };
 
+    buscarLogin = (correoElectronico, contrasenia) => {
+        return this.usuariosBD.buscarLogin(correoElectronico, contrasenia);
+    };
+
     actualizar = (idUsuario, datos) => {
         return this.usuariosBD.actualizar(idUsuario, datos);
     };
 
     eliminar = (idUsuario) => {
         return this.usuariosBD.eliminar(idUsuario);
+    };
+
+
+
+
+    buscarEmpleadosTodos = () => {
+        return this.usuariosBD.buscarEmpleadosTodos();
+    };
+    buscarEmpleadosSinOficina = () => {
+        return this.usuariosBD.buscarEmpleadosSinOficina();
+    };
+    buscarEmpleadosConOficina = () => {
+        return this.usuariosBD.buscarEmpleadosConOficina();
     };
 }

@@ -1,4 +1,4 @@
-import jwt from "jasonwebtoken";
+import jwt from "jsonwebtoken";
 import passport from "passport";
 import dotenv from "dotenv";
 
@@ -11,7 +11,7 @@ export default class AutenticacionControlador {
             if (err || !usuario) {
                 return res.status(400).json({
                     estado: "Falla",
-                    mensaje: "Solicitud incorrecta"
+                    mensaje: "Solicitud incorrecta."
                 });
             }
 

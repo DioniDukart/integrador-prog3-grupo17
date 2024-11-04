@@ -1,4 +1,5 @@
 import UsuariosServicios from "../servicios/usuariosServicios.js";
+import {createHash} from "crypto";
 
 export default class UsuariosControlador {
     constructor() {
@@ -12,7 +13,7 @@ export default class UsuariosControlador {
 
             //verifico requeridos
 
-            if (!nombre || !apellido || !correoElectronico || !contrasenia || idTipoUsuario) {
+            if (!nombre || !apellido || !correoElectronico || !contrasenia || !idTipoUsuario) {
                 return res.status(404).json({
                     mensaje: "Falta/n parametro/s obligatorio/s."
                 })
@@ -24,11 +25,13 @@ export default class UsuariosControlador {
                 })
             }
             */
+            const contraseniaHash= createHash('sha256').update(contrasenia).digest('hex');
+            //console.log(contrasenia+" pasa a ser "+contraseniaHash);
             const usuario = {
                 nombre: nombre,
                 apellido: apellido,
                 correoElectronico: correoElectronico,
-                contrasenia: contrasenia,
+                contrasenia: contraseniaHash,
                 idTipoUsuario: idTipoUsuario,
                 imagen: imagen
             }
@@ -72,7 +75,7 @@ export default class UsuariosControlador {
             });
         }
     }
-    
+
     /* 
     //consulta todos CON PAGINACION
     buscarTodos = async (req, res) => {
@@ -149,7 +152,7 @@ export default class UsuariosControlador {
 
         const cuerpo = req.body;
 
-        if (id===null || id===undefined) {
+        if (id === null || id === undefined) {
             res.status(404).json({ status: "Fallo", data: { error: "El parametro no puede ser vacio." } });
         }
         if (!this.buscarPorId(id)) {//seria mas conveniente llamar otra capa?desconozco
@@ -188,23 +191,83 @@ export default class UsuariosControlador {
         }
 
         try {
-            const resultado= await this.usuariosServicios.eliminar(id);
-            
+            const resultado = await this.usuariosServicios.eliminar(id);
+
             //res.status(204).send();
             if (resultado.affectedRows === 0) {
                 res.status(404).json({
                     mensaje: "No se pudo dar de baja."
                 });
             }
-            
+
             res.status(204).json({
                 mensaje: `Usuario ${id} dado de baja.`
             });
-            
+
         } catch (error) {
             res.status(500).json({
                 mensaje: "Error"
             });
         }
     }
+
+    buscarEmpleadosTodos = async (req, res) => {
+        try {
+            const resultado = await this.usuariosServicios.buscarEmpleadosTodos();
+
+            if (resultado.length === 0) {
+                res.status(500).json({
+                    mensaje: "No se encontraron resultados de Empleados."
+                });
+            }
+
+            res.status(200).json(resultado);
+        } catch (err) {
+            res.status(500).json({
+                mensaje: "Error"
+            });
+        }
+    }
+    buscarEmpleadosSinOficina = async (req, res) => {
+        try {
+            const resultado = await this.usuariosServicios.buscarEmpleadosSinOficina();
+
+            if (resultado.length === 0) {
+                res.status(500).json({
+                    mensaje: "No se encontraron resultados de Empleados sin Oficina."
+                });
+            }
+
+            res.status(200).json(resultado);
+        } catch (err) {
+            res.status(500).json({
+                mensaje: "Error"
+            });
+        }
+    }
+    buscarEmpleadosConOficina = async (req, res) => {
+        try {
+            const resultado = await this.usuariosServicios.buscarEmpleadosConOficina();
+
+            if (resultado.length === 0) {
+                res.status(500).json({
+                    mensaje: "No se encontraron resultados de Empleados con Oficina."
+                });
+            }
+
+            res.status(200).json(resultado);
+        } catch (err) {
+            res.status(500).json({
+                mensaje: "Error"
+            });
+        }
+    }
+
+
+
+
+
+
+
+
 }

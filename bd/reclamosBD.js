@@ -5,7 +5,8 @@ export default class ReclamosBD {
         const consultaSql = 'INSERT INTO reclamos SET ?';
         const [infoCreacion] = await conexion.query(consultaSql, reclamoNuevo);
 
-        return this.buscarPorId(infoCreacion[0].insertId);
+        //return this.buscarPorId(infoCreacion[0].insertId);//este no puede ir pq controlo con affectedRows en el controller
+        return infoCreacion;
     };
 
     buscarTodos = async () => {
@@ -64,15 +65,6 @@ export default class ReclamosBD {
         return resultado;
     }
 
-    sePuedeCancelar = async (idReclamo) => {
-        // TAREA
-        // que otro dato podría consultar además del estado? 
-        //que no este ya cancelado (tener fechaCancelado?-estado cancelado?), que no este finalizado, la pertenencia del usuario a la oficina?
-        const sql = `SELECT * FROM reclamos WHERE idReclamo = ? AND idReclamoEstado = 1`;
-        const [result] = await conexion.query(sql, [idReclamo]);
-        return (result.length > 0) ? result[0] : null;
-    }
-
     actualizar = async (idReclamo, reclamo) => {
         const consultaSql = "UPDATE reclamos SET ? WHERE idReclamo=?";
 
@@ -99,9 +91,14 @@ export default class ReclamosBD {
         return resultado;
     }
 
-    esCancelable= async (idReclamo)=>{
-        const consultaSql= `SELECT FROM reclamos WHERE idReclamo=? AND idReclamoEstado=1;`;//AND fechaFinalizado=null AND fechaCancelado=null ??? idUsuarioFinalizador=null
+    esCancelable= async (idReclamo)=>{//que mas controlar? OJO CON =null, probar y si no anda es IS NULL
+        // TAREA
+        // que otro dato podría consultar además del estado? 
+        //que no este ya cancelado (tener fechaCancelado?-estado cancelado?), que no este finalizado, la pertenencia del usuario a la oficina?
+        const consultaSql= `SELECT FROM reclamos WHERE idReclamo=? AND idReclamoEstado=1 AND fechaFinalizado=null AND fechaCancelado=null AND idUsuarioFinalizador=null;`;//AND fechaFinalizado=null AND fechaCancelado=null ??? idUsuarioFinalizador=null
         const [resultado] = await conexion.query(consultaSql, [idReclamo]);
+
+        //return (resultado.length > 0) ? result[0] : null;
         return resultado;
     }
 }

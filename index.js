@@ -35,8 +35,13 @@ passport.use(validacion);
 
 app.use(passport.initialize());
 
-
-
+// morgan
+/*
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'accesos.log'), { flags: 'a' });
+app.use(morgan('combined', { stream: accessLogStream }));
+*/
 
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
@@ -88,10 +93,8 @@ app.use("/api/v1/reclamos-estados", v1ReclamosEstados);
 import { router as v1Usuarios } from "./v1/rutas/usuariosRutas.js";
 app.use("/api/v1/usuarios", v1Usuarios);
 
-/*
-import {router as v1UsuariosTipos} from "./v1/rutas/usuariosTiposRutas.js";
+import { router as v1UsuariosTipos } from "./v1/rutas/usuariosTiposRutas.js";
 app.use("/api/v1/usuarios-tipos", v1UsuariosTipos);
-*/
 
 import { router as v1Oficinas } from "./v1/rutas/oficinasRutas.js";
 app.use("/api/v1/oficinas", v1Oficinas);
@@ -110,6 +113,10 @@ app.use("/api/v1/autenticacion", v1Autenticacion);
 //"swagger-ui-express sirve la interfaz Swagger"
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
+app.post("/test-token", async (req, res) => {
+    const usuario= req.body.usuario;
+    console.log(usuario)
+})
 
 app.listen(puerto, () => {
     console.log(`Hola puerto ${puerto}!`);

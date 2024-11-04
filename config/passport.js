@@ -8,13 +8,13 @@ dotenv.config();
 //define la validacion de usuarios
 const estrategia = new LocalStrategy(
     {
-        usuarioCampo: 'correoElectronico',
-        contraseniaCampo: 'contrasenia'
+        usernameField: 'correoElectronico', //si no se llama usernameField no entiende?
+        passwordField: 'contrasenia' //si no se llama passwordField no entiende?
     },
     async (correoElectronico, contrasenia, done) => {
         try {
             const usuariosServicios = new UsuariosServicios();
-            const usuario = usuariosServicios.buscar(correoElectronico, contrasenia);
+            const usuario = await usuariosServicios.buscarLogin(correoElectronico, contrasenia);
             if (!usuario) {
                 return done(null, false, { mensaje: "Login incorrecto." });
             }

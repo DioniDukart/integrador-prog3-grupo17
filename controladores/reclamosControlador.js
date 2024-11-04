@@ -220,8 +220,27 @@ export default class ReclamosControlador {
                 })
             }
 
+            if (idReclamoEstado < 2 || idReclamoEstado == 3 || idReclamoEstado > 4) {//que no permanezca como "creado(1), como cancelado(3) sin llamar a cancelarReclamo, o fuera de rango"
+                return res.status(400).send({
+                    estado: "Falla",
+                    mensaje: "Id del estado de reclamo invalido."
+                })
+            }
+
+            //Como controlar la pertenencia a la misma oficina entre usuario y reclamo? Token? Middleware? Como se quien es el usuario? ?req.user o algo asi??
+            /*
+            if(req.body.usuario==){
+
+            }
+            */
+
             const dato = {
-                idReclamoEstado
+                idReclamoEstado //deberia controlar que no sea 3(cancelado) o creado(1)?
+            }
+
+            if (idReclamoEstado == 4) {//si es finalizado, creo su fecha
+                const fechaFinalizado = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                dato = { fechaFinalizado }//y la agrego al objeto dato
             }
 
             const reclamoModificado = await this.reclamosServicios.notificarCambio(idReclamo, dato);

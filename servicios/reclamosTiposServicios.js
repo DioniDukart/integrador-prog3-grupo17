@@ -16,15 +16,32 @@ export default class ReclamosTiposServicios {
     }
 
     // Crear un nuevo tipo de reclamo
-    crear = (datos) => {
-        //const nuevoReclamoTipo = new ReclamosTipo(datos);
-        //return  nuevoReclamoTipo.save();
-        return reclamosTiposBD.crear(datos);
+    crear = async (datos) => {
+        const creado = await reclamosTiposBD.crear(datos);
+        if (!creado) {
+            return { estado: false, mensaje: "No se creo el reclamo." }
+        } else {
+            return { estado: true, mensaje: "Reclamo creado.", data: creado }
+        }
+
     }
 
     // Actualizar un tipo de reclamo por ID
-    actualizar = (id, datosActualizados) => {
-        return reclamosTiposBD.actualizar(id, datosActualizados);
+    actualizar = async (id, datosActualizados) => {
+        //return reclamosTiposBD.actualizar(id, datosActualizados);
+        const existe = await this.reclamosTiposBD.buscarPorId(id);
+
+        if (existe === null) {
+            return { estado: false, mensaje: "No existe reclamo con ese Id" };
+        }
+
+        const modificado= await this.reclamosTiposBD.actualizar(id, datosActualizados);
+
+        if(modificado){
+            return {estado:true, mensaje:"El reclamo ha sido modificado.", data: modificado};
+        } else {
+            return {estado:false, mensaje:"El reclamo NO ha sido modificado."};
+        }
     }
     /*
     // Actualizar parcialmente un tipo de reclamo por ID
