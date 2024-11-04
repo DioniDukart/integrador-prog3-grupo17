@@ -119,7 +119,10 @@ export default class ReclamosServicios {
             return {estado: false, mensaje: 'idReclamo no existe / Ya no se puede cancelar.'};
         }    
 
-        const modificado = await this.reclamosBD.modificar(idReclamo, datosReclamo);
+        //revisar
+        const modificado = await this.reclamosBD.actualizar(idReclamo, datosReclamo);       //cambie modificar por actulizar ya que la funcion modificar no existe
+        //revisar
+        
         if (!modificado){
             return {estado: false, mensaje: 'Reclamo no cancelado'};
         }
