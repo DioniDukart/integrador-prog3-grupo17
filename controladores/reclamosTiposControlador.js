@@ -60,16 +60,52 @@ export default class ReclamosTiposControlador {
         }
     }
     */
-    // Eliminar (desactivar) un tipo de reclamo
-    eliminar = async (req, res) => {
+    // Desactivar un tipo de reclamo
+    desactivar = async (req, res) => {
         try {
             const id = req.params.id;
-            const res = this.reclamosTiposServicios.eliminar(id);
+            const res = this.reclamosTiposServicios.desactivar(id);
             res.status(204).send();
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
     }
+
+
+    // Eliminar un tipo de reclamo por ID
+    eliminar = async (req, res) => {
+        const id = req.params.idReclamoTipo;
+    
+        if (!id || !await this.buscarPorId(id)) {
+            return res.status(404).json({
+                mensaje: "Id recibido no válido"
+            });
+        }
+    
+        try {
+            const resultado = await this.reclamosServicios.eliminar(id);
+    
+            if (resultado.affectedRows === 0) {
+                return res.status(404).json({
+                    mensaje: "No se pudo eliminar."
+                });
+            }
+    
+            res.status(204).json({
+                mensaje: `Reclamo tipo ${id} eliminado.`
+            });
+    
+        } catch (error) {
+            res.status(500).json({
+                mensaje: "Error en el servidor."
+            });
+        }
+    }
+    
+
+
+
+
 }
 
 

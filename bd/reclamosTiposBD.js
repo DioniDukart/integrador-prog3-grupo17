@@ -34,15 +34,22 @@ export default class ReclamosTiposBD {
         return this.buscarPorId(idReclamoTipo);
     };
 
-    // Eliminar (desactivar) un tipo de reclamo
-    eliminar = async (idReclamoTipo) => {
+    // Desactivar un tipo de reclamo
+    desactivar = async (idReclamoTipo) => {
         const consultaSql = "UPDATE reclamos_tipo SET activo=0 WHERE idReclamoTipo=?";
 
         const [resultado] = await conexion.query(consultaSql, [idReclamoTipo]);
 
         return resultado;
     };
+    
+    eliminar = async (idReclamoTipo) => {
+        const consultaSql = "DELETE FROM reclamos_tipo WHERE idReclamoTipo=?";
 
+        const [resultado] = await conexion.query(consultaSql, [idReclamoTipo]);
+
+        return resultado;
+    };
 }
 
 
