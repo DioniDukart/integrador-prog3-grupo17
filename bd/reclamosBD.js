@@ -104,4 +104,16 @@ export default class ReclamosBD {
         const [resultado] = await conexion.query(consultaSql, [idReclamo]);
         return resultado;
     }
+    obtenerReclamoPorId = async (idReclamo) => {
+        const consultaSql = "SELECT * FROM reclamos WHERE idReclamo = ?";
+        const [reclamo] = await conexion.query(consultaSql, [idReclamo]);
+        return reclamo.length > 0 ? reclamo[0] : null;
+    };
+
+    actualizarEstadoReclamo = async (idReclamo, idReclamoEstado) => {
+        const consultaSql = "UPDATE reclamos SET idReclamoEstado = ? WHERE idReclamo = ?";
+        const [resultado] = await conexion.query(consultaSql, [idReclamoEstado, idReclamo]);
+        return resultado.affectedRows > 0;
+    };
 }
+

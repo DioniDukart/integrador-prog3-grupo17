@@ -63,5 +63,14 @@ export default class UsuariosOficinasControlador {
             res.status(500).json({ error: error.message });
         }
     }
+    obtenerReclamosPorOficina = async (req, res) => {
+        try {
+            const idUsuario = req.params.idUsuario; // Asume que el ID del usuario se pasa en la URL
+            const reclamos = await this.usuariosOficinasServicios.obtenerReclamosPorOficina(idUsuario);
+            res.status(200).json(reclamos);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
 }
 

@@ -1,4 +1,5 @@
-import UsuariosOficinasBD from '../bd/UsuariosOficinasBD.js';
+import UsuariosOficinasBD  from "../bd/usuariosOficinasBD.js";
+
 
 export default class UsuariosOficinasServicios {
     constructor() {
@@ -31,5 +32,9 @@ export default class UsuariosOficinasServicios {
     */
     async eliminar(id) {
         return await usuariosOficinasBD.eliminar(id);
+    }
+    // Nuevo método para obtener los reclamos de la oficina del usuario
+    async obtenerReclamosPorOficina(idUsuario) {
+        return await this.usuariosOficinasBD.obtenerReclamosPorOficina(idUsuario);
     }
 }
