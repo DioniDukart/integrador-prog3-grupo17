@@ -11,5 +11,7 @@ router.post('/', usuariosOficinasControlador.crear);
 router.put('/:id', usuariosOficinasControlador.actualizar);
 //router.patch('/:id', usuariosOficinasControlador.actualizarParcialmente);
 router.patch('/:id', usuariosOficinasControlador.eliminar);
+router.get('/:idUsuario/reclamos', usuariosOficinasControlador.obtenerReclamosPorOficina)
 
 export { router };
+

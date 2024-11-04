@@ -1,10 +1,12 @@
 import ReclamosBD from "../bd/reclamosBD.js";
 import NotificacionesServicios from "./notificacionesServicios.js";
+import UsuariosOficinasBD from "../bd/usuariosOficinasBD.js";
 
 export default class ReclamosServicios {
     constructor() {
         this.reclamosBD = new ReclamosBD();
         this.notificacionesServicios = new NotificacionesServicios();
+        this.usuariosOficinasBD = new UsuariosOficinasBD();
     }
 
     crear = (reclamo) => {
@@ -140,6 +142,30 @@ export default class ReclamosServicios {
             estado: cliente[0].estado,
         }
         // enviar la notificacion
-        return await this.notificaciones.enviarCorreo(datosCorreo);        
+        return await this.notificaciones.enviarCorreo(datosCorreo);  
+    atenderReclamo = async (idReclamo, idReclamoEstado, idUsuario) => {
+            const oficinaUsuario = await this.usuariosOficinasBD.obtenerOficinaUsuario(idUsuario);
+            if (!oficinaUsuario) {
+                throw new Error("No tienes una oficina asignada.");
+            }
+    
+            const reclamo = await this.reclamosBD.obtenerReclamoPorId(idReclamo);
+            if (!reclamo) {
+                throw new Error("Reclamo no encontrado.");
+            }
+    
+            if (reclamo.idOficina !== oficinaUsuario.idOficina) {
+                throw new Error("No puedes atender reclamos de otra oficina.");
+            }
+    
+            const exito = await this.reclamosBD.actualizarEstadoReclamo(idReclamo, idReclamoEstado);
+            if (!exito) {
+                throw new Error("Error al actualizar el estado del reclamo.");
+            }
+    
+            return { mensaje: "Reclamo actualizado correctamente." };
+        }         
     }
 }
+
+

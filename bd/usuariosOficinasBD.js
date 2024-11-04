@@ -18,6 +18,15 @@ export default class UsuariosOficinasBD {
         return resultado;
     };
 
+    // Obtener la oficina de un usuario por su ID de usuario
+    obtenerOficinaUsuario = async (idUsuario) => {
+        const consultaSql = "SELECT idOficina FROM usuarios_oficinas WHERE idUsuario = ? AND activo = 1";
+        const [resultado] = await conexion.query(consultaSql, [idUsuario]);
+
+        // Verificar si se encontró una oficina y devolver el resultado
+        return resultado.length ? resultado[0].idOficina : null;
+    };
+
     // Buscar un usuario y oficina por ID
     buscarPorId = async (idUsuarioOficina) => {
         const consultaSql = "SELECT * FROM usuarios_oficinas WHERE idUsuarioOficina=? AND activo=1";
@@ -43,5 +52,18 @@ export default class UsuariosOficinasBD {
 
         return resultado;
     };
+    obtenerReclamosPorOficina = async (idUsuario) => {
+        const consultaSql = `
+            SELECT r.*
+            FROM reclamos r
+            JOIN usuarios_oficinas uo ON uo.idOficina = r.idOficina
+            WHERE uo.idUsuario = ? AND uo.activo = 1
+        `;
+        const [reclamos] = await conexion.query(consultaSql, [idUsuario]);
+
+        return reclamos;
+    };   
+
+    
 
 }

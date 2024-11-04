@@ -1,5 +1,8 @@
 import express from "express";
 import ReclamosControlador from "../../controladores/reclamosControlador.js";
+const { verificarAutorizacion } = require('../middlewares/authMiddleware');
+const reclamosControlador = require('../../controladores/reclamosControlador');
+const autorizarUsuario = require('../../middlewares/autorizarUsuario');
 
 const router = express.Router();
 
@@ -99,8 +102,17 @@ router.post('/atencion/:idReclamo', reclamosControlador.atenderReclamo); //deber
 router.post('/cancelar/:idReclamo', reclamosControlador.cancelarReclamo); //esta deberia ser accesible solo para el cliente
 
 
-/*
-router.patch("/:idReclamo", reclamosControlador.actualizarParcialmente);
-*/
+// Ruta para actualizar el estado de un reclamo
+router.put('/reclamos/:idReclamo/atender', autorizarUsuario, reclamosControlador.atenderReclamo);
+
 
 export { router };
+
+
+
+
+
+
+
+
+

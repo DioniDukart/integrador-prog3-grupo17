@@ -1,9 +1,11 @@
 import ReclamosServicios from "../servicios/reclamosServicios.js";
+import UsuariosOficinasBD from "../bd/usuariosOficinasBD.js";
 
 export default class ReclamosControlador {
 
     constructor() {
         this.reclamosServicios = new ReclamosServicios();
+        this.usuariosOficinasBD = new UsuariosOficinasBD();
     }
 
     //crea reclamo
@@ -47,8 +49,10 @@ export default class ReclamosControlador {
         };
     }
 
+   
+
     //consulta todos
-    buscarTodos = async (req, res) => {
+buscarTodos = async (req, res) => {
         try {
             const resultado = await this.reclamosServicios.buscarTodos();
 
@@ -264,6 +268,53 @@ export default class ReclamosControlador {
             } else {
                 res.status(404).send({ estado: "Falla", mensaje: reclamoCancelado.mensaje });
             }
+        } catch (error) {
+            res.status(500).send({
+                estado: "Falla", mensaje: "Error interno en servidor."
+            });
+        }
+        
+
+    }
+    atenderReclamo = async (req, res) => {
+        try {
+            const idReclamo = req.params.idReclamo;
+            const idReclamoEstado = req.body.idReclamoEstado;
+            const idUsuario = req.user.id; // ID del usuario autenticado (asumimos que viene de la sesión o JWT)
+
+            if (idReclamoEstado === undefined) {
+                return res.status(400).send({
+                    estado: "Falla",
+                    mensaje: "Falta el id del estado de reclamo."
+                });
+            }
+
+            // 1. Obtener la oficina del usuario (empleado)
+            const oficinaUsuario = await this.usuariosOficinasBD.obtenerOficinaUsuario(idUsuario);
+            if (!oficinaUsuario) {
+                return res.status(403).json({ mensaje: "No tienes una oficina asignada." });
+            }
+
+            // 2. Verificar que el reclamo pertenece a la oficina del usuario
+            const reclamo = await this.reclamosServicios.buscarPorId(idReclamo);
+            if (!reclamo) {
+                return res.status(404).json({ mensaje: "Reclamo no encontrado." });
+            }
+
+            if (reclamo.idOficina !== oficinaUsuario) {
+                return res.status(403).json({ mensaje: "No puedes atender reclamos de otra oficina." });
+            }
+
+            // 3. Actualizar el estado del reclamo
+            const dato = { idReclamoEstado };
+            const reclamoModificado = await this.reclamosServicios.notificarCambio(idReclamo, dato);
+
+            if (reclamoModificado.estado) {
+                res.status(200).send({ estado: "OK", mensaje: reclamoModificado.mensaje });
+            } else {
+                res.status(404).send({ estado: "Falla", mensaje: reclamoModificado.mensaje });
+            }
+
         } catch (error) {
             res.status(500).send({
                 estado: "Falla", mensaje: "Error interno en servidor."
