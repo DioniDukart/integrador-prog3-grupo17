@@ -105,6 +105,9 @@ router.post('/cancelar/:idReclamo', reclamosControlador.cancelarReclamo); //esta
 // Ruta para actualizar el estado de un reclamo
 router.put('/reclamos/:idReclamo/atender', autorizarUsuario, reclamosControlador.atenderReclamo);
 
+router.get('/informe',  reclamosControlador.informe);
+
+
 
 export { router };
 
