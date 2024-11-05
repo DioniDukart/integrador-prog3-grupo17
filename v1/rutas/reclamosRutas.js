@@ -1,9 +1,10 @@
 import express from "express";
 import ReclamosControlador from "../../controladores/reclamosControlador.js";
+/*
 const { verificarAutorizacion } = require('../middlewares/authMiddleware');
-const reclamosControlador = require('../../controladores/reclamosControlador');
 const autorizarUsuario = require('../../middlewares/autorizarUsuario');
-
+*/
+import autorizarUsuario from '../../middlewares/autorizarUsuario.js';
 const router = express.Router();
 
 const reclamosControlador = new ReclamosControlador();
@@ -103,13 +104,16 @@ router.post('/cancelar/:idReclamo', reclamosControlador.cancelarReclamo); //esta
 
 
 // Ruta para actualizar el estado de un reclamo
-router.put('/reclamos/:idReclamo/atender', autorizarUsuario, reclamosControlador.atenderReclamo);
+/*
+router.put('/reclamos/:idReclamo/atender', autorizarUsuario([2]), reclamosControlador.atenderReclamo);
 
 router.get('/informe',  reclamosControlador.informe);
-
+*/
+router.post('/atencion/:idReclamo', autorizarUsuario([2]), reclamosControlador.atenderReclamo); //deberia ser accesible para empleado
 
 
 export { router };
+
 
 
 

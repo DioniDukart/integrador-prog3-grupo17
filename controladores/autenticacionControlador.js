@@ -1,4 +1,4 @@
-import jwt from "jasonwebtoken";
+import jwt from "jsonwebtoken";
 import passport from "passport";
 import dotenv from "dotenv";
 
