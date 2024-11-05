@@ -207,4 +207,34 @@ export default class UsuariosControlador {
             });
         }
     }
+     // Actualiza perfil de cliente si el idTipoUsuario es 3
+     actualizarPerfilCliente = async (req, res) => {
+        const id = req.params.idUsuario;
+        const cuerpo = req.body;
+
+        if (!id) {
+            return res.status(404).json({ mensaje: "El parametro idUsuario no puede ser vacío." });
+        }
+
+        try {
+            const usuario = await this.usuariosServicios.buscarPorId(id);
+
+            if (!usuario) {
+                return res.status(404).json({ mensaje: "No existe usuario con el id ingresado." });
+            }
+
+            // Verificar que el idTipoUsuario del usuario sea 3 (Cliente)
+            if (usuario.idTipoUsuario !== 3) {
+                return res.status(403).json({ mensaje: "Solo los usuarios tipo Cliente pueden actualizar su perfil." });
+            }
+
+            const usuarioActualizado = await this.usuariosServicios.actualizar(id, cuerpo);
+            res.status(200).json({ mensaje: "Perfil de cliente actualizado exitosamente.", usuarioActualizado });
+        } catch (error) {
+            res.status(500).json({ mensaje: "Error al actualizar el perfil de cliente." });
+        }
+    }
+
+
+
 }
