@@ -88,5 +88,23 @@ export default class UsuariosBD {
 
         return resultado;
     }
+    // Método para actualizar solo el perfil de un usuario de tipo Cliente
+    actualizarPerfilCliente = async (idUsuario, datos) => {
+        // Primero, obtenemos el usuario por su ID
+        const usuario = await this.buscarPorId(idUsuario);
+
+        // Verificamos que el usuario exista y sea del tipo Cliente (idTipoUsuario 3)
+        if (!usuario || usuario.idTipoUsuario !== 3) {
+            throw new Error("Solo los usuarios tipo Cliente pueden actualizar su perfil.");
+        }
+
+        // Si cumple con la validación, procedemos con la actualización
+        const consultaSql = "UPDATE usuarios SET ? WHERE idUsuario=?;";
+        await conexion.query(consultaSql, [datos, idUsuario]);
+
+        return this.buscarPorId(idUsuario);
+    };
+
+
 
 }
