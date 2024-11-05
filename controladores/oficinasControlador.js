@@ -136,4 +136,40 @@ export default class OficinasControlador {
             });
         }
     };
+
+    // Agregar un empleado a una oficina
+    agregarEmpleado = async (req, res) => {
+        const { idOficina, idEmpleado } = req.body;
+
+        if (!idOficina || !idEmpleado) {
+            return res.status(400).json({ mensaje: "Faltan parámetros" });
+        }
+
+        try {
+            const resultado = await this.oficinasServicios.agregarEmpleado(idOficina, idEmpleado);
+            res.status(200).json(resultado);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ mensaje: "Error al agregar el empleado a la oficina" });
+        }
+    };
+    
+
+    // Quitar un empleado de una oficina
+    quitarEmpleado = async (req, res) => {
+        const { idOficina, idEmpleado } = req.body;
+
+        if (!idOficina || !idEmpleado) {
+            return res.status(400).json({ mensaje: "Faltan parámetros" });
+        }
+
+        try {
+            const resultado = await this.oficinasServicios.quitarEmpleado(idOficina, idEmpleado);
+            res.status(200).json(resultado);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ mensaje: "Error al quitar el empleado de la oficina" });
+        }
+    };
+    
 }
