@@ -35,12 +35,12 @@ export default class ReclamosTiposServicios {
             return { estado: false, mensaje: "No existe reclamo con ese Id" };
         }
 
-        const modificado= await this.reclamosTiposBD.actualizar(id, datosActualizados);
+        const modificado = await this.reclamosTiposBD.actualizar(id, datosActualizados);
 
-        if(modificado){
-            return {estado:true, mensaje:"El reclamo ha sido modificado.", data: modificado};
+        if (modificado) {
+            return { estado: true, mensaje: "El reclamo ha sido modificado.", data: modificado };
         } else {
-            return {estado:false, mensaje:"El reclamo NO ha sido modificado."};
+            return { estado: false, mensaje: "El reclamo NO ha sido modificado." };
         }
     }
     /*

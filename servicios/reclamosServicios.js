@@ -139,4 +139,8 @@ export default class ReclamosServicios {
         // enviar la notificacion
         return await this.notificaciones.enviarCorreo(datosCorreo);
     }
+
+    coincidenciaReclamoOficina = async (idUsuario, idReclamo) => {
+        return await this.reclamosBD.coincidenciaReclamoOficina(idUsuario, idReclamo);
+    }
 }

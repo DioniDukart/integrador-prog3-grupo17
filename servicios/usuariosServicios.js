@@ -35,7 +35,6 @@ export default class UsuariosServicios {
 
 
 
-
     buscarEmpleadosTodos = () => {
         //console.log("llega a servicios");
         return this.usuariosBD.buscarEmpleadosTodos();
