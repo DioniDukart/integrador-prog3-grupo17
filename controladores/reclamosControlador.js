@@ -54,7 +54,7 @@ export default class ReclamosControlador {
 
             if (resultado.length === 0) {
                 res.status(500).json({
-                    mensaje: "No se encontraron resultados."
+                    mensaje: "No se encontraron resultados de Reclamos."
                 });
             }
 
@@ -229,7 +229,9 @@ export default class ReclamosControlador {
 
             //Como controlar la pertenencia a la misma oficina entre usuario y reclamo? Token? Middleware? Como se quien es el usuario? ?req.user o algo asi??
             /*
-            if(req.body.usuario==){
+            //{idUsuario": 16,  "usuario": "Dionisio Dukart",  "idTipoUsuario=1}
+            const oficina= buscarOficinaPorUsuario(req.user.idUsuario);
+            if(req.user.idUsuario==){
 
             }
             */

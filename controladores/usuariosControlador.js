@@ -19,7 +19,7 @@ export default class UsuariosControlador {
                 })
             }
             /*
-            if(this.buscarPorMail(correoElectronico)){
+            if(this.buscarPorCorreo(correoElectronico)){
                 return res.status(404).json({
                     mensaje: "Ya existe un usuario con esa direccion de correo."
                 })
@@ -211,7 +211,58 @@ export default class UsuariosControlador {
         }
     }
 
+    crearEmpleado = async (req, res) => {
+        try {
+            const { nombre, apellido, correoElectronico, contrasenia, idTipoUsuario, imagen } = req.body;
+
+            //verifico requeridos
+
+            if (!nombre || !apellido || !correoElectronico || !contrasenia || !idTipoUsuario) {
+                return res.status(404).json({
+                    mensaje: "Falta/n parametro/s obligatorio/s."
+                })
+            }
+            
+            if(this.usuariosServicios.buscarPorCorreo(correoElectronico)){
+                return res.status(404).json({
+                    mensaje: "Ya existe un usuario con esa direccion de correo."
+                })
+            }
+            
+            const contraseniaHash= createHash('sha256').update(contrasenia).digest('hex');
+            //console.log(contrasenia+" pasa a ser "+contraseniaHash);
+            const usuario = {
+                nombre: nombre,
+                apellido: apellido,
+                correoElectronico: correoElectronico,
+                contrasenia: contraseniaHash,
+                idTipoUsuario: 2,
+                imagen: imagen
+            }
+
+            const resultado = await this.usuariosServicios.crear(usuario);
+
+            if (resultado.affectedRows === 0) {
+                return res.status(404).json({
+                    mensaje: "No se pudo crear."
+                });
+            }
+            //puedo usar resultado.insertId para ya traerme/verificar/mostrar la entrada creada
+
+            //res.status(200).json(resultado);
+            res.status(200).json({
+                mensaje: "Reclamo creado." /*post(resultado.insertId) O ,dato:resultado*/
+            });
+
+        } catch (err) {
+            res.status(500).json({
+                mensaje: "Error"
+            });
+        };
+    }
+
     buscarEmpleadosTodos = async (req, res) => {
+        //console.log("buscarEmpleadosTodos a usuariosControlador");
         try {
             const resultado = await this.usuariosServicios.buscarEmpleadosTodos();
 
@@ -221,10 +272,11 @@ export default class UsuariosControlador {
                 });
             }
 
+            //res.status(200).send({estado:"Ok", data:resultado});
             res.status(200).json(resultado);
         } catch (err) {
             res.status(500).json({
-                mensaje: "Error"
+                mensaje: "Error interno en el servidor."
             });
         }
     }
@@ -263,11 +315,62 @@ export default class UsuariosControlador {
         }
     }
 
+    actualizarEmpleado = async (req, res) => {
+        const id = req.params.idEmpleado;
 
+        const cuerpo = req.body;
 
+        if (id === null || id === undefined) {
+            res.status(404).json({ status: "Fallo", data: { error: "El parametro idEmpleado no puede ser vacio." } });
+        }
+        if (!this.usuariosServicios.esEmpleado(id)) {//seria mas conveniente llamar otra capa?
+            res.status(404).json({ status: "Fallo", data: { error: "No existe empleado con el id ingresado." } });
+        }
 
+        try {
+            const empleadoActualizado = await this.usuariosServicios.actualizar(id, cuerpo);
 
+            res.status(204).json({
+                empleadoActualizado
+            });
+        } catch (error) {
+            res.status(500).json({
+                mensaje: "Error"
+            });
+        }
+    }
 
+    eliminarEmpleado = async (req, res) => {
+        const id = req.params.idUsuario;
 
+        if (!id || !this.buscarPorId(id)) {
+            res.status(404).json({
+                mensaje: "Id recibido no valido"
+            });
+        }
+        if (!this.usuariosServicios.esEmpleado(id)) {//seria mas conveniente llamar otra capa?
+            res.status(404).json({ status: "Fallo", data: { error: "No existe empleado con el id ingresado." } });
+        }
+
+        try {
+            const resultado = await this.usuariosServicios.eliminar(id);
+
+            //res.status(204).send();
+            if (resultado.affectedRows === 0) {
+                res.status(404).json({
+                    mensaje: "No se pudo dar de baja."
+                });
+            }
+
+            res.status(204).json({
+                mensaje: `Usuario ${id} dado de baja.`
+            });
+
+        } catch (error) {
+            res.status(500).json({
+                mensaje: "Error"
+            });
+        }
+    }
 
 }

@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
-import passport from "passport";
+import jwt from 'jsonwebtoken';
+import passport from 'passport';
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -7,7 +7,7 @@ dotenv.config();
 export default class AutenticacionControlador {
     login = async (req, res) => {
         //autentica de forma local (estrategia de passport.js), no guardar sesion, dame el usuario
-        passport.authenticate("local", { session: false }, (err, usuario, info) => {
+        passport.authenticate('local', { session: false }, (err, usuario, info) => {
             if (err || !usuario) {
                 return res.status(400).json({
                     estado: "Falla",
@@ -22,7 +22,8 @@ export default class AutenticacionControlador {
                 }
 
                 //datos de usuario, clave para firmar, tiempo de expiracion
-                const token = jwt.sign(usuario, process.env.JWT_SECRET, { expiresIn: "10m" });
+                const token = jwt.sign(usuario, process.env.JWT_SECRET, { expiresIn: '1h'});
+                //console.log("se creo el token: ", token)
                 return res.status(200).send(
                     { estado: "Ok", token: token }
                 );

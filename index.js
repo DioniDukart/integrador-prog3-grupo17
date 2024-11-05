@@ -1,15 +1,16 @@
 import express from "express";
 import dotenv from "dotenv";
+/*
 import nodemailer from "nodemailer";
 import handlebars from "handlebars";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-
+ */
 import cors from "cors";
 
 import passport from "passport";
-import { estrategia, validacion } from "./config/passport.js"
+import { estrategia, validacion } from "./config/passport.js";
 
 const app = express();
 dotenv.config();
@@ -32,7 +33,6 @@ app.use(cors());
 
 passport.use(estrategia);
 passport.use(validacion);
-
 app.use(passport.initialize());
 
 // morgan
@@ -81,40 +81,34 @@ const swaggerOptions = {
 //genera la especificacion de swagger
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 
-
-import { router as v1Reclamos } from "./v1/rutas/reclamosRutas.js";
-app.use("/api/v1/reclamos", v1Reclamos);
-//esto pide autenticacion (sea cual sea el tipo de usuario) para el acceso a la ruta
-//app.use("/api/v1/reclamos", passport.authenticate("jwt", { session:false }), v1Reclamos);
-
-import { router as v1ReclamosEstados } from "./v1/rutas/reclamosEstadosRutas.js";
-app.use("/api/v1/reclamos-estados", v1ReclamosEstados);
-
-import { router as v1Usuarios } from "./v1/rutas/usuariosRutas.js";
-app.use("/api/v1/usuarios", v1Usuarios);
-
-import { router as v1UsuariosTipos } from "./v1/rutas/usuariosTiposRutas.js";
-app.use("/api/v1/usuarios-tipos", v1UsuariosTipos);
-
-import { router as v1Oficinas } from "./v1/rutas/oficinasRutas.js";
-app.use("/api/v1/oficinas", v1Oficinas);
-
-import { router as v1UsuariosOficinas } from "./v1/rutas/usuariosOficinasRutas.js";
-app.use("/api/v1/usuarios-oficinas", v1UsuariosOficinas);
-
-import { router as v1ReclamosTipos } from "./v1/rutas/reclamosTiposRutas.js";
-app.use("/api/v1/reclamos-tipos", v1ReclamosTipos);
-
+//import validateContentType from './middlewares/validateContentType.js';
 
 import { router as v1Autenticacion } from "./v1/rutas/autenticacionRutas.js";
+import { router as v1Reclamos } from "./v1/rutas/reclamosRutas.js";
+import { router as v1ReclamosEstados } from "./v1/rutas/reclamosEstadosRutas.js";
+import { router as v1Usuarios } from './v1/rutas/usuariosRutas.js';
+import { router as v1UsuariosTipos } from "./v1/rutas/usuariosTiposRutas.js";
+import { router as v1Oficinas } from "./v1/rutas/oficinasRutas.js";
+import { router as v1UsuariosOficinas } from "./v1/rutas/usuariosOficinasRutas.js";
+import { router as v1ReclamosTipos } from "./v1/rutas/reclamosTiposRutas.js";
+
 app.use("/api/v1/autenticacion", v1Autenticacion);
+app.use("/api/v1/reclamos", passport.authenticate("jwt", { session: false }), v1Reclamos); //pide autenticacion (cual sea el tipoUsuario) para el acceso a la ruta
+//app.use("/api/v1/reclamos", v1Reclamos);
+app.use("/api/v1/reclamos-estados", v1ReclamosEstados);
+app.use('/api/v1/usuarios', passport.authenticate('jwt', { session: false }), v1Usuarios);
+//app.use("/api/v1/usuarios", v1Usuarios);
+app.use("/api/v1/usuarios-tipos", v1UsuariosTipos);
+app.use("/api/v1/oficinas", v1Oficinas);
+app.use("/api/v1/usuarios-oficinas", v1UsuariosOficinas);
+app.use("/api/v1/reclamos-tipos", v1ReclamosTipos);
 
 
 //"swagger-ui-express sirve la interfaz Swagger"
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.post("/test-token", async (req, res) => {
-    const usuario= req.body.usuario;
+    const usuario = req.body.usuario;
     console.log(usuario)
 })
 

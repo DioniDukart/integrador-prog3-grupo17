@@ -17,8 +17,12 @@ export default class UsuariosServicios {
         return this.usuariosBD.buscarPorId(idUsuario);
     };
 
-    buscarLogin = (correoElectronico, contrasenia) => {
-        return this.usuariosBD.buscarLogin(correoElectronico, contrasenia);
+    buscarLogin = async (correoElectronico, contrasenia) => {
+        return await this.usuariosBD.buscarLogin(correoElectronico, contrasenia);
+    };
+
+    buscarPorIdValidacion = async (idUsuario) => {
+        return await this.usuariosBD.buscarPorIdValidacion(idUsuario);
     };
 
     actualizar = (idUsuario, datos) => {
@@ -33,6 +37,7 @@ export default class UsuariosServicios {
 
 
     buscarEmpleadosTodos = () => {
+        //console.log("llega a servicios");
         return this.usuariosBD.buscarEmpleadosTodos();
     };
     buscarEmpleadosSinOficina = () => {
@@ -41,4 +46,12 @@ export default class UsuariosServicios {
     buscarEmpleadosConOficina = () => {
         return this.usuariosBD.buscarEmpleadosConOficina();
     };
+
+    esEmpleado = (idEmpleado) => {
+        return this.usuariosBD.esEmpleado(idEmpleado);
+    };
+
+    buscarPorCorreo= (correoElectronico)=>{
+        return this.usuariosBD.buscarPorCorreo(correoElectronico);
+    }
 }
