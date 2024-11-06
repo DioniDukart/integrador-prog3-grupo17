@@ -11,6 +11,7 @@ router.get("/", reclamosEstadosControlador.buscarTodos);
 router.get("/:idReclamoEstado", reclamosEstadosControlador.buscarPorId);
 router.put("/:idReclamoEstado", reclamosEstadosControlador.actualizar);
 router.patch("/:idReclamoEstado", reclamosEstadosControlador.eliminar);
+
 /*
 router.patch("/:idReclamoEstado", reclamosEstadosControlador.actualizarParcialmente);
 */

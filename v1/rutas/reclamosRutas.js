@@ -11,6 +11,9 @@ const autorizarUsuario = require('../../middlewares/autorizarUsuario');
 const router = express.Router();
 
 const reclamosControlador = new ReclamosControlador();
+router.get("/ObtenerReclamosUsuario", autorizarUsuario([3]) ,reclamosControlador.buscarReclamosUsuario );
+router.get('/informe',  reclamosControlador.informe);
+
 
 /**
  * @swagger
@@ -443,11 +446,13 @@ router.post('/cancelar/:idReclamo', autorizarUsuario([3]), reclamosControlador.c
 // Ruta para actualizar el estado de un reclamo
 /*
 router.put('/reclamos/:idReclamo/atender', autorizarUsuario([2]), reclamosControlador.atenderReclamo);
-
-router.get('/informe',  reclamosControlador.informe);
 */
-router.post('/atencion/:idReclamo', autorizarUsuario([2]), reclamosControlador.atenderReclamo); //deberia ser accesible para empleado
 
+
+ //deberia ser accesible para empleado
+
+
+ router.post('/atencion/:idReclamo', autorizarUsuario([2]), reclamosControlador.atenderReclamo);
 
 export { router };
 

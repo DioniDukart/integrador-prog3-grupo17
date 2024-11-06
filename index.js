@@ -99,7 +99,7 @@ app.use("/api/v1/autenticacion", v1Autenticacion);
 app.use("/api/v1/reclamos", passport.authenticate("jwt", { session: false }), v1Reclamos); //pide autenticacion (cual sea el tipoUsuario) para el acceso a la ruta
 //app.use("/api/v1/reclamos", v1Reclamos);
 app.use("/api/v1/reclamos-estados", v1ReclamosEstados);
-app.use('/api/v1/usuarios', passport.authenticate('jwt', { session: false }), v1Usuarios);
+app.use('/api/v1/usuarios', v1Usuarios);
 //app.use("/api/v1/usuarios", v1Usuarios);
 app.use("/api/v1/usuarios-tipos", v1UsuariosTipos);
 app.use("/api/v1/oficinas", v1Oficinas);

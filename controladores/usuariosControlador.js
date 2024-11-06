@@ -52,7 +52,7 @@ export default class UsuariosControlador {
 
         } catch (err) {
             res.status(500).json({
-                mensaje: "Error"
+                mensaje: "Error", err:err 
             });
         };
     }

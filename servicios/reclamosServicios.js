@@ -23,6 +23,11 @@ export default class ReclamosServicios {
         return this.reclamosBD.buscarTodos();
     }
 
+    buscarReclamosUsuario = (id) => {
+        //Switch para verificar el tipo de usuario, y de ahi a distintos metodos en bd?
+        return this.reclamosBD.buscarReclamosUsuario(id);
+    }
+
     /* 
     //consulta todos CON PAGINACION
     buscarTodos= (filter,limit,offset,order,asc)=>{
@@ -92,7 +97,7 @@ export default class ReclamosServicios {
         }
 
         //modifico el reclamo en la bd
-        const modifcado = await this.reclamosBD.actualizar(idReclamo, datosReclamo);
+        const modifcado = await this.reclamosBD.modificar(idReclamo, datosReclamo);
         if (!modifcado) {
             return { estado: false, mensaje: "No se pudo actualizar el reclamo con el ID: " + idReclamo };
         }
@@ -122,10 +127,7 @@ export default class ReclamosServicios {
         }
 
 
-
-        //revisar
-        const modificado = await this.reclamosBD.actualizar(idReclamo, datosReclamo);       //cambie modificar por actulizar ya que la funcion modificar no existe
-        //revisar
+        const modificado = await this.reclamosBD.modificar(idReclamo, datosReclamo); 
         
         if (!modificado){
             return {estado: false, mensaje: 'Reclamo no cancelado'};

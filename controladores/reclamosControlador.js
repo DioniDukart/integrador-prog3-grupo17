@@ -11,10 +11,11 @@ export default class ReclamosControlador {
     //crea reclamo
     crear = async (req, res) => {
         try {
-            const { asunto, descripcion, idReclamoTipo, idUsuarioCreador/*, idUsuarioFinalizador*/ } = req.body;
+            const { asunto, descripcion, idReclamoTipo/*, idUsuarioFinalizador*/ } = req.body;
+            const idUsuario = req.user.idUsuario;
 
             //verifico requeridos
-            if (!asunto || !idReclamoTipo || !idUsuarioCreador) {
+            if (!asunto || !idReclamoTipo || !idUsuario) {
                 return res.status(404).json({
                     mensaje: "Falta/n parametro/s."
                 })
@@ -25,7 +26,7 @@ export default class ReclamosControlador {
                 asunto: asunto,
                 descripcion: descripcion,
                 idReclamoTipo: idReclamoTipo,
-                idUsuarioCreador: idUsuarioCreador
+                idUsuarioCreador: idUsuario,
             }
 
             const resultado = await this.reclamosServicios.crear(reclamo);
@@ -49,10 +50,28 @@ export default class ReclamosControlador {
         };
     }
 
-   
+    buscarReclamosUsuario= async (req, res) => {
+        const idUsuario = req.user.idUsuario;
+        try {
+            const resultado = await this.reclamosServicios.buscarReclamosUsuario(idUsuario);
+
+            if (resultado.length === 0) {
+                res.status(500).json({
+                    mensaje: "No se encontraron resultados de Reclamos."
+                });
+            }
+
+            res.status(200).json(resultado);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({
+                mensaje: "Error interno en el servidor."
+            });
+        }
+    }
 
     //consulta todos
-buscarTodos = async (req, res) => {
+    buscarTodos = async (req, res) => {
         try {
             const resultado = await this.reclamosServicios.buscarTodos();
 
@@ -216,7 +235,8 @@ buscarTodos = async (req, res) => {
         try {
             const idReclamo = req.params.idReclamo;
             const idReclamoEstado = req.body.idReclamoEstado;
-
+            console.log("idReclamoEstado: ", idReclamo);
+            console.log("idReclamoEstado: ", idReclamoEstado);
             if (idReclamoEstado === undefined) {
                 return res.status(400).send({
                     estado: "Falla",
@@ -240,7 +260,8 @@ buscarTodos = async (req, res) => {
             /*
             //{"idUsuario": 16,  "usuario": "Dionisio Dukart",  "idTipoUsuario"=1}
             */
-            const coincidencia= await this.reclamosServicios.coincidenciaReclamoOficina(req.user.idUsuario, idReclamo); //trae true o  false
+            const coincidencia= await this.reclamosServicios.coincidenciaReclamoOficina(req.user.idUsuario, idReclamo);//trae true o  false
+            console.log("coincidencia: ", coincidencia);
             //if(req.user.idUsuario==oficina.) 
             if(!coincidencia){
                 return res.status(400).send({
@@ -250,15 +271,19 @@ buscarTodos = async (req, res) => {
             }
             
 
-            const dato = {
+            let dato = {
                 idReclamoEstado
             }
 
+
             if (idReclamoEstado == 4) {//si es finalizado, creo su fecha
+                //console.log("Entramos a id if 4");
                 const fechaFinalizado = new Date().toISOString().slice(0, 19).replace('T', ' ');
-                dato = { fechaFinalizado }//y la agrego al objeto dato
+                dato.fechaFinalizado = fechaFinalizado;//y la agrego al objeto dato
+               // console.log("Fecha Finalizado: ", fechaFinalizado);
             }
 
+            //console.log("dato: ", dato);
             const reclamoModificado = await this.reclamosServicios.notificarCambio(idReclamo, dato);
 
             if (reclamoModificado.estado) {
@@ -269,11 +294,11 @@ buscarTodos = async (req, res) => {
 
         } catch (error) {
             res.status(500).send({
-                estado: "Falla", mensaje: "Error interno en servidor."
+                estado: "Falla", mensaje: "Error interno en servidor.", error:error
             });
         }
     }
-
+    
     cancelarReclamo = async (req, res) => {
         try {
             const idReclamo = req.params.idReclamo;
@@ -292,6 +317,7 @@ buscarTodos = async (req, res) => {
                 fechaCancelado: new Date().toISOString().slice(0, 19).replace('T', ' ')  // yyyy-mm-dd hh:mm:ss
             };
 
+
             const reclamoCancelado = await this.reclamosServicios.cancelarReclamo(idReclamo, dato);
 
             if (reclamoCancelado.estado) {
@@ -301,12 +327,14 @@ buscarTodos = async (req, res) => {
             }
         } catch (error) {
             res.status(500).send({
-                estado: "Falla", mensaje: "Error interno en servidor."
+                estado: "Falla", mensaje: "Error interno en servidor.", error:error
             });
         }
         
 
     }
+    
+    /*
     atenderReclamo = async (req, res) => {
         try {
             const idReclamo = req.params.idReclamo;
@@ -352,6 +380,7 @@ buscarTodos = async (req, res) => {
             });
         }
     }
+        */
     informe = async (req, res) => {
 
         try{
