@@ -13,4 +13,8 @@ router.put("/:idOficina", oficinasControlador.actualizar);
 //router.patch("/:idOficina", oficinasControlador.actualizarParcialmente);
 router.patch("/:idOficina", oficinasControlador.eliminar);
 
+// estas rutas sirven para agregar y quitar empleados
+router.post("/agregar-empleado", oficinasControlador.agregarEmpleado);
+router.post("/quitar-empleado", oficinasControlador.quitarEmpleado);
+
 export { router };

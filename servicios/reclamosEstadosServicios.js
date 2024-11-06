@@ -24,4 +24,8 @@ export default class ReclamosEstadosServicios {
     eliminar = (idReclamoEstado) => {
         return this.reclamosEstadosBD.eliminar(idReclamoEstado);
     }
+
+    cancelar = (idReclamoEstado) => {
+        return this.reclamosEstadosBD.cancelar(idReclamoEstado);
+    }
 }

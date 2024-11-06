@@ -102,6 +102,7 @@ export default class ReclamosBD {
         return resultado;
     }
 
+
     coincidenciaReclamoOficina = async (idUsuario, idReclamo) => {
         const consultaSql = `SELECT r.idReclamo, r.idReclamoTipo AS reclamo_tipo, o.idReclamoTipo AS oficina_tipo
         FROM reclamos r
@@ -117,4 +118,46 @@ export default class ReclamosBD {
         //return rows.length > 0;
         return resultado.length > 0;
     }
+}
+
+    obtenerReclamoPorId = async (idReclamo) => {
+        const consultaSql = "SELECT * FROM reclamos WHERE idReclamo = ?";
+        const [reclamo] = await conexion.query(consultaSql, [idReclamo]);
+        return reclamo.length > 0 ? reclamo[0] : null;
+    };
+
+    actualizarEstadoReclamo = async (idReclamo, idReclamoEstado) => {
+        const consultaSql = "UPDATE reclamos SET idReclamoEstado = ? WHERE idReclamo = ?";
+        const [resultado] = await conexion.query(consultaSql, [idReclamoEstado, idReclamo]);
+        return resultado.affectedRows > 0;
+    };
+    buscarDatosReportePdf = async () => {        
+        const sql = 'CALL `datosPDF`()';
+
+        const [result] = await conexion.query(sql);
+
+        const datosReporte = {
+            reclamosTotales : result[0][0].reclamosTotales,
+            reclamosNoFinalizados : result[0][0].reclamosNoFinalizados,
+            reclamosFinalizados : result[0][0].reclamosFinalizados,
+            descripcionTipoRreclamoFrecuente : result[0][0].descripcionTipoRreclamoFrecuente,
+            cantidadTipoRreclamoFrecuente : result[0][0].cantidadTipoRreclamoFrecuente
+        }
+
+        return datosReporte;
+    }
+
+    buscarDatosReporteCsv = async () => {
+        const sql = `SELECT r.idReclamo as 'reclamo', rt.descripcion as 'tipo', re.descripcion AS 'estado',
+                     DATE_FORMAT(r.fechaCreado, '%Y-%m-%d %H:%i:%s') AS 'fechaCreado', CONCAT(u.nombre, ' ', u.apellido) AS 'cliente'
+                    FROM reclamos AS r 
+                    INNER JOIN reclamos_tipo AS rt ON rt.idReclamoTipo = r.idReclamoTipo 
+                    INNER JOIN reclamos_estado AS re ON re.idReclamoEstado = r.idReclamoEstado 
+                    INNER JOIN usuarios AS u ON u.idUsuario = r.idUsuarioCreador 
+                        WHERE r.idReclamoEstado <> 4;`;
+
+        const [result] = await conexion.query(sql);
+        return result;
+    }
+
 }

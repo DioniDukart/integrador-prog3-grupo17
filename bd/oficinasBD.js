@@ -43,4 +43,19 @@ export default class OficinasBD {
 
         return resultado;
     };
+
+        // agregar un empleado a una oficina
+        agregarEmpleado = async (idOficina, idEmpleado) => {
+            const consultaSql = "UPDATE empleados SET idOficina=? WHERE idEmpleado=?";
+            await conexion.query(consultaSql, [idOficina, idEmpleado]);
+            return { mensaje: "Empleado agregado a la oficina correctamente" };
+        };
+    
+        // quitar un empleado de una oficina
+        quitarEmpleado = async (idOficina, idEmpleado) => {
+            const consultaSql = "UPDATE empleados SET idOficina=NULL WHERE idEmpleado=? AND idOficina=?";
+            await conexion.query(consultaSql, [idEmpleado, idOficina]);
+            return { mensaje: "El empleado fue quitado de la oficina correctamente" };
+        };
+      
 }

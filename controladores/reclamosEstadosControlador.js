@@ -142,6 +142,30 @@ export default class ReclamosEstadosControlador {
         };
     };
 
+    //Este metodo es el encargado de cambiar el estado de Creado a Cancelado
+    cancelar = async (req, res) => {
+        try {
+            const id = req.params.idEstadoReclamo;
+            const resultado = await this.reclamosEstadosServicios.cancelar(id);
+    
+            if (resultado.affectedRows === 0) {
+                return res.status(404).json({
+                    mensaje: "No se pudo cancelar."
+                });
+            }
+    
+            return res.status(200).json({
+                mensaje: `Reclamo ${id} cancelado.`
+            });
+        } catch (error) {
+            res.status(500).json({
+                mensaje: "Error al cancelar el reclamo.",
+                error: error.message
+            });
+        }
+    };
+    
+
     eliminar = async (req, res) => {
         const id = req.params.idEstadoReclamo;
 
