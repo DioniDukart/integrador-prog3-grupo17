@@ -5,7 +5,8 @@ export default class ReclamosBD {
         const consultaSql = 'INSERT INTO reclamos SET ?';
         const [infoCreacion] = await conexion.query(consultaSql, reclamoNuevo);
 
-        return this.buscarPorId(infoCreacion[0].insertId);
+        //return this.buscarPorId(infoCreacion[0].insertId);//este no puede ir pq controlo con affectedRows en el controller
+        return infoCreacion;
     };
 
     buscarTodos = async () => {
@@ -59,18 +60,9 @@ export default class ReclamosBD {
         const consultaSql = "SELECT r.idReclamo, r.asunto, r.descripcion, r.fechaCreado, r.fechaFinalizado, r.fechaCancelado, rE.descripcion AS estado, rT.descripcion AS tipo FROM reclamos AS r INNER JOIN reclamos_estado AS rE ON rE.idReclamoEstado=r.idReclamoEstado INNER JOIN reclamos_tipo AS rT ON rT.idReclamoTipo=r.idReclamoTipo WHERE r.idReclamo=? AND rE.activo=1 AND rT.activo=1";
 
         const [resultado] = await conexion.query(consultaSql, idReclamo);
-        
+
         //return (resultado.length > 0) ? resultado[0] : null;
         return resultado;
-    }
-
-    sePuedeCancelar = async (idReclamo) => {
-        // TAREA
-        // que otro dato podría consultar además del estado? 
-        //que no este ya cancelado (tener fechaCancelado?-estado cancelado?), que no este finalizado, la pertenencia del usuario a la oficina?
-        const sql = `SELECT * FROM reclamos WHERE idReclamo = ? AND idReclamoEstado = 1`;
-        const [result] = await conexion.query(sql, [idReclamo]);
-        return (result.length > 0) ? result[0] : null;
     }
 
     actualizar = async (idReclamo, reclamo) => {
@@ -99,11 +91,35 @@ export default class ReclamosBD {
         return resultado;
     }
 
-    esCancelable= async (idReclamo)=>{
-        const consultaSql= `SELECT FROM reclamos WHERE idReclamo=? AND idReclamoEstado=1;`;//AND fechaFinalizado=null AND fechaCancelado=null ??? idUsuarioFinalizador=null
+    esCancelable = async (idReclamo) => {//que mas controlar? OJO CON =null, probar y si no anda es IS NULL
+        // TAREA
+        // que otro dato podría consultar además del estado? 
+        //que no este ya cancelado (tener fechaCancelado?-estado cancelado?), que no este finalizado, la pertenencia del usuario a la oficina?
+        const consultaSql = `SELECT FROM reclamos WHERE idReclamo=? AND idReclamoEstado=1 AND fechaFinalizado=null AND fechaCancelado=null AND idUsuarioFinalizador=null;`;//AND fechaFinalizado=null AND fechaCancelado=null ??? idUsuarioFinalizador=null
         const [resultado] = await conexion.query(consultaSql, [idReclamo]);
+
+        //return (resultado.length > 0) ? result[0] : null;
         return resultado;
     }
+
+
+    coincidenciaReclamoOficina = async (idUsuario, idReclamo) => {
+        const consultaSql = `SELECT r.idReclamo, r.idReclamoTipo AS reclamo_tipo, o.idReclamoTipo AS oficina_tipo
+        FROM reclamos r
+        JOIN usuarios_oficinas uo ON uo.idUsuario = ?
+        JOIN oficinas o ON uo.idOficina = o.idOficina
+        WHERE r.idReclamo = ? AND r.idReclamoTipo = o.idReclamoTipo;`
+
+        //const [rows]
+        const [resultado] = await conexion.query(consultaSql, [idReclamo]);
+        //return (resultado.length > 0) ? result[0] : null;
+        //return resultado;
+
+        //return rows.length > 0;
+        return resultado.length > 0;
+    }
+}
+
     obtenerReclamoPorId = async (idReclamo) => {
         const consultaSql = "SELECT * FROM reclamos WHERE idReclamo = ?";
         const [reclamo] = await conexion.query(consultaSql, [idReclamo]);
@@ -145,4 +161,3 @@ export default class ReclamosBD {
     }
 
 }
-

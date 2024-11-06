@@ -26,12 +26,20 @@ export default class ReclamosTiposBD {
     };
 
     // Actualizar un tipo de reclamo
+    // Solo cambiar la {descripcion?}
     actualizar = async (idReclamoTipo, reclamoTipoActualizado) => {
         const consultaSql = "UPDATE reclamos_tipo SET ? WHERE idReclamoTipo=?";
 
-        await conexion.query(consultaSql, [reclamoTipoActualizado, idReclamoTipo]);
+        //await conexion.query(consultaSql, [reclamoTipoActualizado, idReclamoTipo]);
+        const [resultado]= await conexion.query(consultaSql, [reclamoTipoActualizado, idReclamoTipo]);
 
-        return this.buscarPorId(idReclamoTipo);
+        //return this.buscarPorId(idReclamoTipo);
+        
+        if (resultado.affectedRows === 0) {
+            return false;
+        }
+        return true;
+        
     };
 
     // Desactivar un tipo de reclamo

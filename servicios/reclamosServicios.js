@@ -12,7 +12,7 @@ export default class ReclamosServicios {
     crear = (reclamo) => {
         const reclamoNuevo = {
             ...reclamo,
-            fechaCreado: new Date().toISOString().replace('T', ' ').replace('Z', ''),
+            fechaCreado: new Date().toISOString().slice(0, 19).replace('T', ' '),
             idReclamoEstado: 1
         }
         return this.reclamosBD.crear(reclamoNuevo);
@@ -66,7 +66,7 @@ export default class ReclamosServicios {
 
         if (reclamo.reclamoEstado > 2) {
             let reclamoActualizado = { ...reclamo };
-            const fecha = new Date().toISOString().replace('T', ' ').replace('Z', '');
+            const fecha = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
             if (reclamo.reclamoEstado === 4) {
                 reclamoActualizado.fechaFinalizado = fecha;
@@ -116,10 +116,12 @@ export default class ReclamosServicios {
 
     cancelarReclamo = async (idReclamo, datosReclamo) => {
         // verificar si existe el reclamo y se puede modificar
-        const existe = await this.reclamosBD.sePuedeCancelar(idReclamo);
+        const existe = await this.reclamosBD.esCancelable(idReclamo);
         if (existe === null) {
-            return {estado: false, mensaje: 'idReclamo no existe / Ya no se puede cancelar.'};
-        }    
+            return { estado: false, mensaje: 'idReclamo no existe / Ya no se puede cancelar.' };
+        }
+
+
 
         //revisar
         const modificado = await this.reclamosBD.actualizar(idReclamo, datosReclamo);       //cambie modificar por actulizar ya que la funcion modificar no existe
@@ -127,12 +129,13 @@ export default class ReclamosServicios {
         
         if (!modificado){
             return {estado: false, mensaje: 'Reclamo no cancelado'};
+
         }
 
         // buscar los datos del cliente
         const cliente = await this.reclamos.buscarInformacionClientePorReclamo(idReclamo);
-        if (!cliente){
-            return {estado: false, mensaje: 'Faltan datos de cliente'};
+        if (!cliente) {
+            return { estado: false, mensaje: 'Faltan datos de cliente' };
         }
 
         const datosCorreo = {
@@ -142,7 +145,15 @@ export default class ReclamosServicios {
             estado: cliente[0].estado,
         }
         // enviar la notificacion
-        return await this.notificaciones.enviarCorreo(datosCorreo);  
+
+        return await this.notificaciones.enviarCorreo(datosCorreo);
+    }
+
+    coincidenciaReclamoOficina = async (idUsuario, idReclamo) => {
+        return await this.reclamosBD.coincidenciaReclamoOficina(idUsuario, idReclamo); 
+    }
+  
+  
     atenderReclamo = async (idReclamo, idReclamoEstado, idUsuario) => {
             const oficinaUsuario = await this.usuariosOficinasBD.obtenerOficinaUsuario(idUsuario);
             if (!oficinaUsuario) {
@@ -164,7 +175,7 @@ export default class ReclamosServicios {
             }
     
             return { mensaje: "Reclamo actualizado correctamente." };
-        }         
+                 
     }
     generarInforme = async (formato) => {
         if (formato === 'pdf') {
@@ -211,6 +222,7 @@ export default class ReclamosServicios {
                 'Content-Disposition': 'attachment; filename="reporte.csv"'
             }
         };
+
     }
     
 

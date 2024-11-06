@@ -39,12 +39,39 @@ export default class ReclamosTiposControlador {
 
     // Actualizar un tipo de reclamo por ID
     actualizar = async (req, res) => {
+        /* 
         try {
             const id = req.params.id;
             const reclamoTipoActualizado = await this.reclamosTiposServicios.actualizar(id, req.body);
             res.status(200).json(reclamoTipoActualizado);
         } catch (error) {
             res.status(500).json({ error: error.message });
+        }
+        */
+        try {
+            const id = req.params.id;
+            if (id === undefined) {
+                return res.status(400).send({
+                    estado: "Falla", mensaje: "No se recibio el id del Tipo de Reclamo a modificar."
+                });
+            }
+            //const datos = req.body;
+            const {descripcion} = req.body;//es mas seguro?
+            if (Object.keys(datos).lenght === 0) {
+                return res.status(400).send({
+                    estado: "Falla", mensaje: "No se recibieron datos para modificar el Tipo de Reclamo."
+                });
+            }
+
+            //const reclamoTipoActualizado = await this.reclamosTiposServicios.actualizar(id, datos);
+            const reclamoTipoActualizado = await this.reclamosTiposServicios.actualizar(id, descripcion);
+            if (reclamoTipoActualizado.estado) {
+                res.status(200).send({ estado: "OK", mensaje: reclamoTipoActualizado.mensaje });
+            } else {
+                res.status(404).send({ estado: "Falla", mensaje: reclamoTipoActualizado.mensaje });
+            }
+        } catch (error) {
+            res.status(500).send({ estado: "Falla", mensaje: "Error interno en el servidor." });
         }
     }
     /*

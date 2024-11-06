@@ -58,7 +58,7 @@ buscarTodos = async (req, res) => {
 
             if (resultado.length === 0) {
                 res.status(500).json({
-                    mensaje: "No se encontraron resultados."
+                    mensaje: "No se encontraron resultados de Reclamos."
                 });
             }
 
@@ -224,8 +224,39 @@ buscarTodos = async (req, res) => {
                 })
             }
 
+            if (idReclamoEstado < 2 || idReclamoEstado == 3 || idReclamoEstado > 4) {//que no permanezca como "creado(1), como cancelado(3) sin llamar a cancelarReclamo, o fuera de rango"
+                //basicamente solo sigue si es 2 o 4
+                //seria mejor llamar a otros metodos segun idReclamoEstado? Seria mas flexible ej: atenderEnProceso(), atenderCancelar(), atenderFinalizar(), etc 
+                return res.status(400).send({
+                    estado: "Falla",
+                    mensaje: "Id del estado de reclamo invalido."
+                })
+            }
+
+            //Controlar la pertenencia a la misma oficina entre usuario y reclamo? Token? Como se quien es el usuario? req.user?
+            //Averiguo el idOficina buscando en usuarios-oficinas la que tenga el idUsuario, el cual saco del token
+            //Luego verifico el idReclamoTipo de la misma oficina
+            //Finalmente veo si el idReclamoTipo de la oficina, es el mismo idReclamoTipo del Reclamo
+            /*
+            //{"idUsuario": 16,  "usuario": "Dionisio Dukart",  "idTipoUsuario"=1}
+            */
+            const coincidencia= await this.reclamosServicios.coincidenciaReclamoOficina(req.user.idUsuario, idReclamo); //trae true o  false
+            //if(req.user.idUsuario==oficina.) 
+            if(!coincidencia){
+                return res.status(400).send({
+                    estado: "Falla",
+                    mensaje: "El tipo del reclamo no pertenece a la oficina del empleado."
+                })
+            }
+            
+
             const dato = {
                 idReclamoEstado
+            }
+
+            if (idReclamoEstado == 4) {//si es finalizado, creo su fecha
+                const fechaFinalizado = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                dato = { fechaFinalizado }//y la agrego al objeto dato
             }
 
             const reclamoModificado = await this.reclamosServicios.notificarCambio(idReclamo, dato);
