@@ -118,7 +118,7 @@ export default class ReclamosBD {
         //return rows.length > 0;
         return resultado.length > 0;
     }
-}
+
 
     obtenerReclamoPorId = async (idReclamo) => {
         const consultaSql = "SELECT * FROM reclamos WHERE idReclamo = ?";
