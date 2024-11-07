@@ -183,7 +183,9 @@ export default class UsuariosControlador {
     // método para actualizar el perfil de un cliente
     actualizarPerfilCliente = async (req, res) => {
         try {
-            const idUsuario = req.params.idUsuario;
+            
+            const idUsuario= req.user.idUsuario;
+            //const idUsuario = req.params.idUsuario;
             const datosActualizados = req.body;
 
             // Validar que los datos requeridos estén presentes
@@ -396,7 +398,7 @@ export default class UsuariosControlador {
             });
         }
     }
-/*
+    /*
      // Actualiza perfil de cliente si el idTipoUsuario es 3
      actualizarPerfilCliente = async (req, res) => {
         const id = req.params.idUsuario;
@@ -424,13 +426,6 @@ export default class UsuariosControlador {
             res.status(500).json({ mensaje: "Error al actualizar el perfil de cliente." });
         }
     }
-
-
-*/
-
-
-
-
-
+    */
 
 }

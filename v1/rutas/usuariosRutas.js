@@ -34,5 +34,5 @@ router.patch("/empleados/eliminar/:idUsuario", autorizarUsuario([1]), usuariosCo
 router.patch("/:idUsuario", usuariosControlador.actualizarParcialmente);
 */
 // Ruta específica para actualizar el perfil del cliente
-router.put("/:idUsuario/perfilCliente", usuariosControlador.actualizarPerfilCliente);
+router.put("/actualizarPerfilCliente/:idUsuario", autorizarUsuario([3]), usuariosControlador.actualizarPerfilCliente);
 export { router };

@@ -11,9 +11,8 @@ const autorizarUsuario = require('../../middlewares/autorizarUsuario');
 const router = express.Router();
 
 const reclamosControlador = new ReclamosControlador();
-router.get("/ObtenerReclamosUsuario", autorizarUsuario([3]) ,reclamosControlador.buscarReclamosUsuario );
-router.get('/informe',  reclamosControlador.informe);
-
+router.get("/ObtenerReclamosUsuario", autorizarUsuario([3]), reclamosControlador.buscarReclamosUsuario);
+router.get('/informe', reclamosControlador.informe);
 
 /**
  * @swagger
@@ -199,7 +198,6 @@ router.get("/", reclamosControlador.buscarTodos);
  */
 router.get("/:idReclamo", reclamosControlador.buscarPorId);
 
-
 /**
  * @swagger
  * /api/v1/reclamos/{idReclamo}:
@@ -331,9 +329,7 @@ router.get("/:idReclamo", reclamosControlador.buscarPorId);
  */
 router.put("/:idReclamo", reclamosControlador.actualizar);
 
-
 router.delete("/:idReclamo", reclamosControlador.eliminar);
-
 
 /**
  * @swagger
@@ -442,26 +438,4 @@ router.post('/atencion/:idReclamo', autorizarUsuario([2]), reclamosControlador.a
  */
 router.post('/cancelar/:idReclamo', autorizarUsuario([3]), reclamosControlador.cancelarReclamo); //esta deberia ser accesible solo para el cliente
 
-
-// Ruta para actualizar el estado de un reclamo
-/*
-router.put('/reclamos/:idReclamo/atender', autorizarUsuario([2]), reclamosControlador.atenderReclamo);
-*/
-
-
- //deberia ser accesible para empleado
-
-
- router.post('/atencion/:idReclamo', autorizarUsuario([2]), reclamosControlador.atenderReclamo);
-
 export { router };
-
-
-
-
-
-
-
-
-
-
