@@ -129,7 +129,7 @@ export default class OficinasControlador {
                 });
             }
 
-            res.status(204).send();
+            res.status(204).send(resultado);
         } catch (err) {
             res.status(500).json({
                 mensaje: "Error al eliminar la oficina."
@@ -139,37 +139,51 @@ export default class OficinasControlador {
 
     // Agregar un empleado a una oficina
     agregarEmpleado = async (req, res) => {
-        const { idOficina, idEmpleado } = req.body;
+        const idOficina = req.params.idUsuario;
+        const { idUsuario } = req.body;
 
-        if (!idOficina || !idEmpleado) {
+        if (!idOficina || !idUsuario) {
             return res.status(400).json({ mensaje: "Faltan parámetros" });
         }
 
         try {
-            const resultado = await this.oficinasServicios.agregarEmpleado(idOficina, idEmpleado);
+            const ocupado = await this.oficinasServicios.tieneOficina(idUsuario);
+            if (ocupado.affectedRows !== 0) {
+                return res.status(400).json({
+                    mensaje: "El empleado ya tiene otra oficina asignada."
+                });
+            }
+
+            const resultado = await this.oficinasServicios.agregarEmpleado(idOficina, idUsuario);
             res.status(200).json(resultado);
         } catch (error) {
             console.error(error);
             res.status(500).json({ mensaje: "Error al agregar el empleado a la oficina" });
         }
     };
-    
 
     // Quitar un empleado de una oficina
     quitarEmpleado = async (req, res) => {
-        const { idOficina, idEmpleado } = req.body;
+        const idOficina = req.params.idUsuario;
+        const { idUsuario } = req.body;
 
-        if (!idOficina || !idEmpleado) {
+        if (!idOficina || !idUsuario) {
             return res.status(400).json({ mensaje: "Faltan parámetros" });
         }
 
         try {
-            const resultado = await this.oficinasServicios.quitarEmpleado(idOficina, idEmpleado);
+            const ocupado = await this.oficinasServicios.tieneOficina(idUsuario);
+            if (ocupado.affectedRows == 0) {
+                return res.status(400).json({
+                    mensaje: "El empleado no tiene oficina asignada."
+                });
+            }
+            const resultado = await this.oficinasServicios.quitarEmpleado(idOficina, idUsuario);
             res.status(200).json(resultado);
         } catch (error) {
             console.error(error);
             res.status(500).json({ mensaje: "Error al quitar el empleado de la oficina" });
         }
     };
-    
+
 }
