@@ -50,7 +50,7 @@ export default class ReclamosControlador {
         };
     }
 
-    buscarReclamosUsuario= async (req, res) => {
+    buscarReclamosUsuario = async (req, res) => {
         const idUsuario = req.user.idUsuario;
         try {
             const resultado = await this.reclamosServicios.buscarReclamosUsuario(idUsuario);
@@ -260,16 +260,16 @@ export default class ReclamosControlador {
             /*
             //{"idUsuario": 16,  "usuario": "Dionisio Dukart",  "idTipoUsuario"=1}
             */
-            const coincidencia= await this.reclamosServicios.coincidenciaReclamoOficina(req.user.idUsuario, idReclamo);//trae true o  false
+            const coincidencia = await this.reclamosServicios.coincidenciaReclamoOficina(req.user.idUsuario, idReclamo);//trae true o  false
             console.log("coincidencia: ", coincidencia);
             //if(req.user.idUsuario==oficina.) 
-            if(!coincidencia){
+            if (!coincidencia) {
                 return res.status(400).send({
                     estado: "Falla",
                     mensaje: "El tipo del reclamo no pertenece a la oficina del empleado."
                 })
             }
-            
+
 
             let dato = {
                 idReclamoEstado
@@ -280,7 +280,7 @@ export default class ReclamosControlador {
                 //console.log("Entramos a id if 4");
                 const fechaFinalizado = new Date().toISOString().slice(0, 19).replace('T', ' ');
                 dato.fechaFinalizado = fechaFinalizado;//y la agrego al objeto dato
-               // console.log("Fecha Finalizado: ", fechaFinalizado);
+                // console.log("Fecha Finalizado: ", fechaFinalizado);
             }
 
             //console.log("dato: ", dato);
@@ -294,11 +294,11 @@ export default class ReclamosControlador {
 
         } catch (error) {
             res.status(500).send({
-                estado: "Falla", mensaje: "Error interno en servidor.", error:error
+                estado: "Falla", mensaje: "Error interno en servidor.", error: error
             });
         }
     }
-    
+
     cancelarReclamo = async (req, res) => {
         try {
             const idReclamo = req.params.idReclamo;
@@ -327,13 +327,13 @@ export default class ReclamosControlador {
             }
         } catch (error) {
             res.status(500).send({
-                estado: "Falla", mensaje: "Error interno en servidor.", error:error
+                estado: "Falla", mensaje: "Error interno en servidor.", error: error
             });
         }
-        
+
 
     }
-    
+
     /*
     atenderReclamo = async (req, res) => {
         try {
@@ -383,17 +383,17 @@ export default class ReclamosControlador {
         */
     informe = async (req, res) => {
 
-        try{
+        try {
             const formato = req.query.formato;
-            if(!formato || !formatosPermitidos.includes(formato)){
+            if (!formato || !formatosPermitidos.includes(formato)) {
                 return res.status(400).send({
-                    estado:"Falla",
-                    mensaje: "Formato inválido para el informe."    
+                    estado: "Falla",
+                    mensaje: "Formato inválido para el informe."
                 })
             }
-            
+
             // genera informe
-            const {buffer, path, headers} = await this.reclamosServicios.generarInforme(formato);
+            const { buffer, path, headers } = await this.reclamosServicios.generarInforme(formato);
 
             // configura cabecera de respuesta 
             res.set(headers)
@@ -406,18 +406,18 @@ export default class ReclamosControlador {
                 res.status(200).download(path, (err) => {
                     if (err) {
                         return res.status(500).send({
-                            estado:"Falla",
-                            mensaje: " No se pudo generar el informe."    
+                            estado: "Falla",
+                            mensaje: " No se pudo generar el informe."
                         })
                     }
                 })
             }
-        }catch(error){
+        } catch (error) {
             console.log(error)
             res.status(500).send({
-                estado:"Falla", mensaje: "Error interno en servidor."
+                estado: "Falla", mensaje: "Error interno en servidor."
             });
-        } 
+        }
     }
 
 }

@@ -6,11 +6,11 @@ const router = express.Router();
 const reclamosEstadosControlador = new ReclamosEstadosControlador();
 
 //estas completan la url del app.use en index
-router.post("/", reclamosEstadosControlador.crear);
-router.get("/", reclamosEstadosControlador.buscarTodos);
-router.get("/:idReclamoEstado", reclamosEstadosControlador.buscarPorId);
-router.put("/:idReclamoEstado", reclamosEstadosControlador.actualizar);
-router.patch("/:idReclamoEstado", reclamosEstadosControlador.eliminar);
+router.post("/", autorizarUsuario([1]), reclamosEstadosControlador.crear);
+router.get("/", autorizarUsuario([1]), reclamosEstadosControlador.buscarTodos);
+router.get("/:idReclamoEstado", autorizarUsuario([1]), reclamosEstadosControlador.buscarPorId);
+router.put("/:idReclamoEstado", autorizarUsuario([1]), reclamosEstadosControlador.actualizar);
+router.patch("/:idReclamoEstado", autorizarUsuario([1]), reclamosEstadosControlador.eliminar);
 
 /*
 router.patch("/:idReclamoEstado", reclamosEstadosControlador.actualizarParcialmente);

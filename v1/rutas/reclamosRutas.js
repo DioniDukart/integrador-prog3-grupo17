@@ -12,7 +12,7 @@ const router = express.Router();
 
 const reclamosControlador = new ReclamosControlador();
 router.get("/ObtenerReclamosUsuario", autorizarUsuario([3]), reclamosControlador.buscarReclamosUsuario);
-router.get('/informe', reclamosControlador.informe);
+router.get('/informe', autorizarUsuario([1]), reclamosControlador.informe);
 
 /**
  * @swagger
@@ -160,7 +160,7 @@ router.get('/informe', reclamosControlador.informe);
  *                   type: string
  *                   example: "Faltan datos obligatorios"
  */
-router.post("/", reclamosControlador.crear); //solo cliente?
+router.post("/",  autorizarUsuario([2]), reclamosControlador.crear); //solo cliente? //faltaria otro generico para administradores?
 
 /**
  * @swagger
@@ -178,7 +178,7 @@ router.post("/", reclamosControlador.crear); //solo cliente?
  *              items:
  *               $ref: '#/components/schemas/Reclamo'
  */
-router.get("/", reclamosControlador.buscarTodos);
+router.get("/", autorizarUsuario([1]), reclamosControlador.buscarTodos);
 
 /**
  * @swagger
@@ -196,7 +196,7 @@ router.get("/", reclamosControlador.buscarTodos);
  *              items:
  *               $ref: '#/components/schemas/Reclamo'
  */
-router.get("/:idReclamo", reclamosControlador.buscarPorId);
+router.get("/:idReclamo", autorizarUsuario([1]), reclamosControlador.buscarPorId);
 
 /**
  * @swagger
@@ -327,9 +327,9 @@ router.get("/:idReclamo", reclamosControlador.buscarPorId);
  *                   type: string
  *                   example: "No se encontró un reclamo con el ID proporcionado."
  */
-router.put("/:idReclamo", reclamosControlador.actualizar);
+router.put("/:idReclamo", autorizarUsuario([1]), reclamosControlador.actualizar);
 
-router.delete("/:idReclamo", reclamosControlador.eliminar);
+router.delete("/:idReclamo", autorizarUsuario([1]), reclamosControlador.eliminar);
 
 /**
  * @swagger

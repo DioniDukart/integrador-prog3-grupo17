@@ -56,7 +56,7 @@ export default class ReclamosBD {
         const sql = `SELECT * FROM reclamos WHERE idReclamo = ?`;
         const [result] = await conexion.query(sql, [idReclamo]);
         return (result.length > 0) ? result[0] : null;
-       
+
         /* //console.log("Llega a BuscarPorId de reclamosBD");
 
         //const consultaSql= "SELECT * FROM reclamos WHERE idReclamo=?";
@@ -73,11 +73,11 @@ export default class ReclamosBD {
     modificar = async (idReclamo, datos) => {
         const sql = 'UPDATE reclamos SET ? WHERE idReclamo = ?';
         const [result] = await conexion.query(sql, [datos, idReclamo]);
-        
+
         if (result.affectedRows === 0) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -88,16 +88,16 @@ export default class ReclamosBD {
         return resultado;
     }
 
-/*
-    actualizar = async (idReclamo, reclamo) => {
-        const consultaSql = "UPDATE reclamos SET ? WHERE idReclamo=?";
-
-        await this.conexion.query(consultaSql, [reclamo, idReclamo]);
-        console.log("estamos en actualizar");
-        console.log(idReclamo, reclamo);
-        return this.buscarPorId(idReclamo);
-    }
-*/
+    /*
+        actualizar = async (idReclamo, reclamo) => {
+            const consultaSql = "UPDATE reclamos SET ? WHERE idReclamo=?";
+    
+            await this.conexion.query(consultaSql, [reclamo, idReclamo]);
+            console.log("estamos en actualizar");
+            console.log(idReclamo, reclamo);
+            return this.buscarPorId(idReclamo);
+        }
+    */
 
     eliminar = async (idReclamo) => {
         //const consultaSql= "UPDATE reclamos SET activo=0 WHERE idReclamo=?";//reclamo no tiene campo "activo"
@@ -127,7 +127,7 @@ export default class ReclamosBD {
         //return (resultado.length > 0) ? result[0] : null;
         console.log(resultado);
         return resultado;
-        
+
     }
 
 
@@ -159,17 +159,17 @@ export default class ReclamosBD {
         const [resultado] = await conexion.query(consultaSql, [idReclamoEstado, idReclamo]);
         return resultado.affectedRows > 0;
     };
-    buscarDatosReportePdf = async () => {        
+    buscarDatosReportePdf = async () => {
         const sql = 'CALL `datosPDF`()';
 
         const [result] = await conexion.query(sql);
 
         const datosReporte = {
-            reclamosTotales : result[0][0].reclamosTotales,
-            reclamosNoFinalizados : result[0][0].reclamosNoFinalizados,
-            reclamosFinalizados : result[0][0].reclamosFinalizados,
-            descripcionTipoRreclamoFrecuente : result[0][0].descripcionTipoRreclamoFrecuente,
-            cantidadTipoRreclamoFrecuente : result[0][0].cantidadTipoRreclamoFrecuente
+            reclamosTotales: result[0][0].reclamosTotales,
+            reclamosNoFinalizados: result[0][0].reclamosNoFinalizados,
+            reclamosFinalizados: result[0][0].reclamosFinalizados,
+            descripcionTipoRreclamoFrecuente: result[0][0].descripcionTipoRreclamoFrecuente,
+            cantidadTipoRreclamoFrecuente: result[0][0].cantidadTipoRreclamoFrecuente
         }
 
         return datosReporte;
