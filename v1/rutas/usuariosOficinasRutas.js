@@ -1,5 +1,6 @@
 import express from 'express';
 import UsuariosOficinasControlador from '../../controladores/usuariosOficinasControlador.js';
+import autorizarUsuario from '../../middlewares/autorizarUsuario.js';
 
 const router = express.Router();
 

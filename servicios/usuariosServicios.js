@@ -5,8 +5,12 @@ export default class UsuariosServicios {
         this.usuariosBD = new UsuariosBD();
     }
 
-    crear = (usuario) => {
-        return this.usuariosBD.crear(usuario);
+    crear = async (usuario) => {
+        const usuarioCreado = await this.usuariosBD.crear(usuario);
+        if (!usuarioCreado) {
+            return { estado: false, mensaje: 'Usuario no creado' };
+        }
+        return { estado: true, mensaje: 'Reclamo creado', data: usuarioCreado };
     };
 
     buscarTodos = () => {
@@ -17,22 +21,34 @@ export default class UsuariosServicios {
         return this.usuariosBD.buscarPorId(idUsuario);
     };
 
-    buscarLogin = async (correoElectronico, contrasenia) => {
-        return await this.usuariosBD.buscarLogin(correoElectronico, contrasenia);
+    buscarLogin = (correoElectronico, contrasenia) => {
+        return this.usuariosBD.buscarLogin(correoElectronico, contrasenia);
     };
 
-    buscarPorIdValidacion = async (idUsuario) => {
-        return await this.usuariosBD.buscarPorIdValidacion(idUsuario);
+    buscarPorIdValidacion = (idUsuario) => {
+        return this.usuariosBD.buscarPorIdValidacion(idUsuario);
     };
 
-    actualizar = (idUsuario, datos) => {
-        return this.usuariosBD.actualizar(idUsuario, datos);
+    actualizar = async (idUsuario, datos) => {
+        //return this.usuariosBD.actualizar(idUsuario, datos);
+
+        const existe = await this.usuariosBD.buscarPorId(idUsuario);
+        if (existe === null) {
+            return { estado: false, mensaje: "No existe Usuario con ese id." };
+        }
+
+        const actualizado = await this.usuariosBD.actualizar(idUsuario, datos);
+
+        if (actualizado) {
+            return { estado: true, mensaje: "Usuario modificado." };
+        } else {
+            return { estado: false, mensaje: "Usuario no modificado." };
+        }
     };
 
     eliminar = (idUsuario) => {
         return this.usuariosBD.eliminar(idUsuario);
     };
-
 
 
     buscarEmpleadosTodos = () => {
@@ -50,12 +66,13 @@ export default class UsuariosServicios {
         return this.usuariosBD.esEmpleado(idEmpleado);
     };
 
-    buscarPorCorreo= (correoElectronico)=>{
+    buscarPorCorreo = (correoElectronico) => {
         return this.usuariosBD.buscarPorCorreo(correoElectronico);
-    }
+    };
 
     // Método específico para actualizar el perfil de un cliente
     actualizarPerfilCliente = async (idUsuario, datos) => {
+        /*
         const usuario = await this.buscarPorId(idUsuario);
 
         // Verifica que el usuario exista y sea del tipo Cliente (idTipoUsuario 3)
@@ -65,6 +82,23 @@ export default class UsuariosServicios {
 
         // Llama al método de actualización de datos
         return this.actualizar(idUsuario, datos);
+        */
+
+        const existe = await this.usuariosBD.buscarPorId(idUsuario);
+        if (existe === null) {//!existe
+            return { estado: false, mensaje: "No existe Cliente con ese id." };
+        }
+        if (existe.idTipoUsuario !== 3) {
+            return { estado: false, mensaje: "El usuario no es de tipo Cliente." };
+        }
+
+        const actualizado = await this.usuariosBD.actualizar(idUsuario, datos);//o llamar this.actualizar? o usuariosBD.actualizarPerfilCliente
+
+        if (actualizado) {
+            return { estado: true, mensaje: "Usuario modificado." };
+        } else {
+            return { estado: false, mensaje: "Usuario no modificado." };
+        }
     };
 
 

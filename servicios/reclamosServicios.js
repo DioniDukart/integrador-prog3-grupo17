@@ -127,10 +127,10 @@ export default class ReclamosServicios {
         }
 
 
-        const modificado = await this.reclamosBD.modificar(idReclamo, datosReclamo); 
-        
-        if (!modificado){
-            return {estado: false, mensaje: 'Reclamo no cancelado'};
+        const modificado = await this.reclamosBD.modificar(idReclamo, datosReclamo);
+
+        if (!modificado) {
+            return { estado: false, mensaje: 'Reclamo no cancelado' };
 
         }
 
@@ -152,40 +152,41 @@ export default class ReclamosServicios {
     }
 
     coincidenciaReclamoOficina = async (idUsuario, idReclamo) => {
-        return await this.reclamosBD.coincidenciaReclamoOficina(idUsuario, idReclamo); 
+        return await this.reclamosBD.coincidenciaReclamoOficina(idUsuario, idReclamo);
     }
-  
-  
+
+
     atenderReclamo = async (idReclamo, idReclamoEstado, idUsuario) => {
-            const oficinaUsuario = await this.usuariosOficinasBD.obtenerOficinaUsuario(idUsuario);
-            if (!oficinaUsuario) {
-                throw new Error("No tienes una oficina asignada.");
-            }
-    
-            const reclamo = await this.reclamosBD.obtenerReclamoPorId(idReclamo);
-            if (!reclamo) {
-                throw new Error("Reclamo no encontrado.");
-            }
-    
-            if (reclamo.idOficina !== oficinaUsuario.idOficina) {
-                throw new Error("No puedes atender reclamos de otra oficina.");
-            }
-    
-            const exito = await this.reclamosBD.actualizarEstadoReclamo(idReclamo, idReclamoEstado);
-            if (!exito) {
-                throw new Error("Error al actualizar el estado del reclamo.");
-            }
-    
-            return { mensaje: "Reclamo actualizado correctamente." };
-                 
+        const oficinaUsuario = await this.usuariosOficinasBD.obtenerOficinaUsuario(idUsuario);
+        if (!oficinaUsuario) {
+            throw new Error("No tienes una oficina asignada.");
+        }
+
+        const reclamo = await this.reclamosBD.obtenerReclamoPorId(idReclamo);
+        if (!reclamo) {
+            throw new Error("Reclamo no encontrado.");
+        }
+
+        if (reclamo.idOficina !== oficinaUsuario.idOficina) {
+            throw new Error("No puedes atender reclamos de otra oficina.");
+        }
+
+        const exito = await this.reclamosBD.actualizarEstadoReclamo(idReclamo, idReclamoEstado);
+        if (!exito) {
+            throw new Error("Error al actualizar el estado del reclamo.");
+        }
+
+        return { mensaje: "Reclamo actualizado correctamente." };
+
     }
+
     generarInforme = async (formato) => {
         if (formato === 'pdf') {
 
             return await this.reportePdf();
 
-        }else if (formato === 'csv'){
-            
+        } else if (formato === 'csv') {
+
             return await this.reporteCsv();
 
         }
@@ -195,11 +196,11 @@ export default class ReclamosServicios {
         const datosReporte = await this.reclamosBD.buscarDatosReportePdf();
 
         if (!datosReporte || datosReporte.length === 0) {
-            return { estado: false, mensaje: 'Sin datos para el reporte'};
+            return { estado: false, mensaje: 'Sin datos para el reporte' };
         }
 
         const pdf = await this.informes.informeReclamosPdf(datosReporte);
-        
+
         return {
             buffer: pdf,
             headers: {
@@ -213,10 +214,10 @@ export default class ReclamosServicios {
         const datosReporte = await this.reclamosBD.buscarDatosReporteCsv();
 
         if (!datosReporte || datosReporte.length === 0) {
-            return {estado: false, mensaje: 'Sin datos para el reporte'};
+            return { estado: false, mensaje: 'Sin datos para el reporte' };
         }
 
-        const csv =  await this.informes.informeReclamosCsv(datosReporte);
+        const csv = await this.informes.informeReclamosCsv(datosReporte);
         return {
             path: csv,
             headers: {
@@ -226,7 +227,7 @@ export default class ReclamosServicios {
         };
 
     }
-    
+
 
 }
 
