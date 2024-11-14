@@ -36,10 +36,10 @@ export default class UsuariosControlador {
 
             const resultado = await this.usuariosServicios.crear(usuario);
 
-            if (nuevoReclamo.estado) {
-                res.status(201).send({ estado: "OK", data: nuevoReclamo.data }); //mensaje: "Reclamo creado."
+            if (resultado.estado) {
+                res.status(201).send({ estado: "OK", data: resultado.data }); //mensaje: "Reclamo creado."
             } else {
-                res.status(404).send({ estado: "Falla", mensaje: nuevoReclamo.mensaje });
+                res.status(404).send({ estado: "Falla", mensaje: resultado.mensaje });
             }
             /* 
             if (resultado.affectedRows === 0) {

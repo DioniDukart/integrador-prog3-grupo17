@@ -235,8 +235,6 @@ export default class ReclamosControlador {
         try {
             const idReclamo = req.params.idReclamo;
             const idReclamoEstado = req.body.idReclamoEstado;
-            console.log("idReclamoEstado: ", idReclamo);
-            console.log("idReclamoEstado: ", idReclamoEstado);
             if (idReclamoEstado === undefined) {
                 return res.status(400).send({
                     estado: "Falla",

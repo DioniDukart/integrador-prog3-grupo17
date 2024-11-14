@@ -25,8 +25,8 @@ export default class OficinasServicios {
         return this.oficinasBD.eliminar(idOficina);
     };
 
-    agregarEmpleado = (idOficina, idUsuario) => {
-        return this.oficinasBD.agregarEmpleado(idOficina, idUsuario);
+    agregarEmpleado = (idUsuario, idOficina) => {
+        return this.oficinasBD.agregarEmpleado(idUsuario, idOficina);
     };
 
     quitarEmpleado = (idOficina, idUsuario) => {

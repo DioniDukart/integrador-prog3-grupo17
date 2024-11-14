@@ -160,7 +160,7 @@ router.get('/informe', autorizarUsuario([1]), reclamosControlador.informe);
  *                   type: string
  *                   example: "Faltan datos obligatorios"
  */
-router.post("/",  autorizarUsuario([2]), reclamosControlador.crear); //solo cliente? //faltaria otro generico para administradores?
+router.post("/",  autorizarUsuario([3]), reclamosControlador.crear); //solo cliente? //faltaria otro generico para administradores?
 
 /**
  * @swagger
