@@ -8,22 +8,24 @@ export default class NotificacionesServicios {
 
     enviarCorreo = async (datos) => {
         const pathArchivo = fileURLToPath(import.meta.url); //me da la ubicacion "././index.js"
-        const dir = path.dirname(`${pathArchivo}`); //me queda "././"
+        //const dir = path.dirname(`${pathArchivo}`); //me queda "././"
+        const dir = path.dirname("pathArchivo");
 
-        const plantilla = fs.readFileSync(path.join(dir + "../utilidades/handlebars/plantilla.hbs"), "utf-8");
+        //const plantilla = fs.readFileSync(path.join(dir + "../utilidades/handlebars/plantilla.hbs"), "utf-8");
+        const plantilla = fs.readFileSync(path.join(dir + "/utilidades/handlebars/plantilla.hbs"), "utf-8");
 
         const plantillaHandlebars = handlebars.compile(plantilla);
 
         //info con la que se rellena la plantilla handlebars
         const datosCorreo = {
             nombre: datos.nombre,
-            nroReclamo: datos.idReclamo,
+            nroReclamo: datos.reclamo,
             estado: datos.estado
         };
 
         const htmlCorreo = plantillaHandlebars(datosCorreo);
 
-        const transporter = nodemailer.createTransport({
+        const transporter = nodemailer.createTransport({ //se crea el transporter con los datos del emisor, previamente cargados en .env
             service: "gmail",
             auth: {
                 user: process.env.DIRECCION_CORREO,
@@ -34,10 +36,9 @@ export default class NotificacionesServicios {
         const mailOptions = {
             from: "API Grupo 17 | Prog3", //puede no ir, quedaria el correo emisor
             to: datos.correoElectronico,
-            subject: "Actualización de su reclamo nro. " + datos.idReclamo + ".", //OJO CON ESTE NUMERO?
+            subject: "Actualización de su reclamo ID " + datos.reclamo + ".", //OJO CON ESTE NUMERO?
             html: htmlCorreo
         };
-
 
         try {
             const info = await transporter.sendMail(mailOptions);

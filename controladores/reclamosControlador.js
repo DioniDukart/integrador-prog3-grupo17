@@ -231,6 +231,54 @@ export default class ReclamosControlador {
         }
     }
 
+
+    /*
+    atenderReclamo = async (req, res) => {
+        try {
+            const idReclamo = req.params.idReclamo;
+            const idReclamoEstado = req.body.idReclamoEstado;
+            const idUsuario = req.user.id; // ID del usuario autenticado (asumimos que viene de la sesión o JWT)
+
+            if (idReclamoEstado === undefined) {
+                return res.status(400).send({
+                    estado: "Falla",
+                    mensaje: "Falta el id del estado de reclamo."
+                });
+            }
+
+            // 1. Obtener la oficina del usuario (empleado)
+            const oficinaUsuario = await this.usuariosOficinasBD.obtenerOficinaUsuario(idUsuario);
+            if (!oficinaUsuario) {
+                return res.status(403).json({ mensaje: "No tienes una oficina asignada." });
+            }
+
+            // 2. Verificar que el reclamo pertenece a la oficina del usuario
+            const reclamo = await this.reclamosServicios.buscarPorId(idReclamo);
+            if (!reclamo) {
+                return res.status(404).json({ mensaje: "Reclamo no encontrado." });
+            }
+
+            if (reclamo.idOficina !== oficinaUsuario) {
+                return res.status(403).json({ mensaje: "No puedes atender reclamos de otra oficina." });
+            }
+
+            // 3. Actualizar el estado del reclamo
+            const dato = { idReclamoEstado };
+            const reclamoModificado = await this.reclamosServicios.notificarCambio(idReclamo, dato);
+
+            if (reclamoModificado.estado) {
+                res.status(200).send({ estado: "OK", mensaje: reclamoModificado.mensaje });
+            } else {
+                res.status(404).send({ estado: "Falla", mensaje: reclamoModificado.mensaje });
+            }
+
+        } catch (error) {
+            res.status(500).send({
+                estado: "Falla", mensaje: "Error interno en servidor."
+            });
+        }
+    }
+    */
     atenderReclamo = async (req, res) => {
         try {
             const idReclamo = req.params.idReclamo;
@@ -251,7 +299,6 @@ export default class ReclamosControlador {
                 })
             }
 
-            //Controlar la pertenencia a la misma oficina entre usuario y reclamo? Token? Como se quien es el usuario? req.user?
             //Averiguo el idOficina buscando en usuarios-oficinas la que tenga el idUsuario, el cual saco del token
             //Luego verifico el idReclamoTipo de la misma oficina
             //Finalmente veo si el idReclamoTipo de la oficina, es el mismo idReclamoTipo del Reclamo
@@ -259,7 +306,7 @@ export default class ReclamosControlador {
             //{"idUsuario": 16,  "usuario": "Dionisio Dukart",  "idTipoUsuario"=1}
             */
             const coincidencia = await this.reclamosServicios.coincidenciaReclamoOficina(req.user.idUsuario, idReclamo);//trae true o  false
-            console.log("coincidencia: ", coincidencia);
+            //console.log("coincidencia: ", coincidencia);
             //if(req.user.idUsuario==oficina.) 
             if (!coincidencia) {
                 return res.status(400).send({
@@ -268,14 +315,12 @@ export default class ReclamosControlador {
                 })
             }
 
-
             let dato = {
                 idReclamoEstado
             }
 
-
             if (idReclamoEstado == 4) {//si es finalizado, creo su fecha
-                //console.log("Entramos a id if 4");
+                //console.log("Entrando a if ifReclamoEstado 4");
                 const fechaFinalizado = new Date().toISOString().slice(0, 19).replace('T', ' ');
                 dato.fechaFinalizado = fechaFinalizado;//y la agrego al objeto dato
                 // console.log("Fecha Finalizado: ", fechaFinalizado);
@@ -332,53 +377,7 @@ export default class ReclamosControlador {
 
     }
 
-    /*
-    atenderReclamo = async (req, res) => {
-        try {
-            const idReclamo = req.params.idReclamo;
-            const idReclamoEstado = req.body.idReclamoEstado;
-            const idUsuario = req.user.id; // ID del usuario autenticado (asumimos que viene de la sesión o JWT)
 
-            if (idReclamoEstado === undefined) {
-                return res.status(400).send({
-                    estado: "Falla",
-                    mensaje: "Falta el id del estado de reclamo."
-                });
-            }
-
-            // 1. Obtener la oficina del usuario (empleado)
-            const oficinaUsuario = await this.usuariosOficinasBD.obtenerOficinaUsuario(idUsuario);
-            if (!oficinaUsuario) {
-                return res.status(403).json({ mensaje: "No tienes una oficina asignada." });
-            }
-
-            // 2. Verificar que el reclamo pertenece a la oficina del usuario
-            const reclamo = await this.reclamosServicios.buscarPorId(idReclamo);
-            if (!reclamo) {
-                return res.status(404).json({ mensaje: "Reclamo no encontrado." });
-            }
-
-            if (reclamo.idOficina !== oficinaUsuario) {
-                return res.status(403).json({ mensaje: "No puedes atender reclamos de otra oficina." });
-            }
-
-            // 3. Actualizar el estado del reclamo
-            const dato = { idReclamoEstado };
-            const reclamoModificado = await this.reclamosServicios.notificarCambio(idReclamo, dato);
-
-            if (reclamoModificado.estado) {
-                res.status(200).send({ estado: "OK", mensaje: reclamoModificado.mensaje });
-            } else {
-                res.status(404).send({ estado: "Falla", mensaje: reclamoModificado.mensaje });
-            }
-
-        } catch (error) {
-            res.status(500).send({
-                estado: "Falla", mensaje: "Error interno en servidor."
-            });
-        }
-    }
-        */
     informe = async (req, res) => {
 
         try {

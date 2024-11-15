@@ -84,77 +84,10 @@ export default class ReclamosServicios {
 
         return this.reclamosBD.crear(idReclamo, reclamo);
     }
-
+    /*
     eliminado = (idReclamo) => {
         return this.reclamosBD.crear(idReclamo);
     }
-
-    notificarCambio = async (idReclamo, datosReclamo) => {
-        //verificacion de la existencia del reclamo en la bd
-        const exist = await this.reclamosBD.buscarPorId(idReclamo);
-        if (exist === null) {
-            return { estado: false, mensaje: "No se pudo encontrar reclamo con el ID: " + idReclamo };
-        }
-
-        //modifico el reclamo en la bd
-        const modifcado = await this.reclamosBD.modificar(idReclamo, datosReclamo);
-        if (!modifcado) {
-            return { estado: false, mensaje: "No se pudo actualizar el reclamo con el ID: " + idReclamo };
-        }
-
-        //busco los datos del cliente para armar el correo
-        const datosClienteReclamo = await this.reclamosBD.buscarClientePorReclamo(idReclamo);
-        if (!cliente) {
-            return { estado: false, mensaje: "No se pudo encontrar el cliente del reclamo: " + idReclamo };
-        }
-
-        const datosCorreo = {
-            nombre: datosClienteReclamo[0].nombre,
-            correoElectronico: datosClienteReclamo[0].correoElectronico,
-            reclamo: idReclamo,
-            estado: datosClienteReclamo[0].estado
-        };
-
-        //envio el correo y retorno
-        return await this.notificacionesServicios.enviarCorreo(datosCorreo);
-    }
-
-    cancelarReclamo = async (idReclamo, datosReclamo) => {
-        // verificar si existe el reclamo y se puede modificar
-        const existe = await this.reclamosBD.esCancelable(idReclamo);
-        if (existe === null) {
-            return { estado: false, mensaje: 'idReclamo no existe / Ya no se puede cancelar.' };
-        }
-
-
-        const modificado = await this.reclamosBD.modificar(idReclamo, datosReclamo);
-
-        if (!modificado) {
-            return { estado: false, mensaje: 'Reclamo no cancelado' };
-
-        }
-
-        // buscar los datos del cliente
-        const cliente = await this.reclamos.buscarInformacionClientePorReclamo(idReclamo);
-        if (!cliente) {
-            return { estado: false, mensaje: 'Faltan datos de cliente' };
-        }
-
-        const datosCorreo = {
-            nombre: cliente[0].cliente,
-            correoElectronico: cliente[0].correoElectronico,
-            reclamo: idReclamo,
-            estado: cliente[0].estado,
-        }
-        // enviar la notificacion
-
-        return await this.notificaciones.enviarCorreo(datosCorreo);
-    }
-
-    coincidenciaReclamoOficina = async (idUsuario, idReclamo) => {
-        return await this.reclamosBD.coincidenciaReclamoOficina(idUsuario, idReclamo);
-    }
-
 
     atenderReclamo = async (idReclamo, idReclamoEstado, idUsuario) => {
         const oficinaUsuario = await this.usuariosOficinasBD.obtenerOficinaUsuario(idUsuario);
@@ -179,6 +112,73 @@ export default class ReclamosServicios {
         return { mensaje: "Reclamo actualizado correctamente." };
 
     }
+    */
+
+    notificarCambio = async (idReclamo, datosReclamo) => {
+        //verificacion de la existencia del reclamo en la bd
+        const existe = await this.reclamosBD.buscarPorId(idReclamo);
+        if (existe === null) {
+            return { estado: false, mensaje: "No se pudo encontrar reclamo nro: " + idReclamo };
+        }
+
+        //modifico el reclamo en la bd
+        const modificado = await this.reclamosBD.actualizar(idReclamo, datosReclamo);
+        if (!modificado) {
+            return { estado: false, mensaje: "No se pudo actualizar el reclamo nro: " + idReclamo };
+        }
+
+        //busco los datos del cliente para armar el correo
+        const datosClienteReclamo = await this.reclamosBD.buscarClientePorReclamo(idReclamo);
+        if (!datosClienteReclamo) {
+            return { estado: false, mensaje: "No se pudo encontrar el cliente del reclamo nro: " + idReclamo };
+        }
+
+        const datosCorreo = {
+            nombre: datosClienteReclamo[0].nombre,
+            correoElectronico: datosClienteReclamo[0].correoElectronico,
+            reclamo: idReclamo,
+            estado: datosClienteReclamo[0].estado
+        };
+        //console.log("datos correo "+{datosCorreo});
+
+        //envio el correo y retorno
+        return await this.notificacionesServicios.enviarCorreo(datosCorreo);
+    }
+
+    cancelarReclamo = async (idReclamo, datosReclamo) => {
+        // verificar si existe el reclamo y se puede modificar
+        const existe = await this.reclamosBD.esCancelable(idReclamo);
+        if (existe === null) {
+            return { estado: false, mensaje: 'El reclamo con ese id no existe o no se puede cancelar.' };
+        }
+
+        const modificado = await this.reclamosBD.actualizar(idReclamo, datosReclamo);
+        if (!modificado) {
+            return { estado: false, mensaje: 'Reclamo no cancelado' };
+
+        }
+
+        // buscar los datos del cliente
+        const datosClienteReclamo = await this.reclamos.buscarInformacionClientePorReclamo(idReclamo);
+        if (!datosClienteReclamo) {
+            return { estado: false, mensaje: 'Faltan datos de cliente' };
+        }
+
+        const datosCorreo = {
+            nombre: datosClienteReclamo[0].nombre,
+            correoElectronico: datosClienteReclamo[0].correoElectronico,
+            reclamo: idReclamo,
+            estado: datosClienteReclamo[0].estado,
+        }
+        
+        // enviar la notificacion
+        return await this.notificaciones.enviarCorreo(datosCorreo);
+    }
+
+    coincidenciaReclamoOficina = async (idUsuario, idReclamo) => {
+        return await this.reclamosBD.coincidenciaReclamoOficina(idUsuario, idReclamo);
+    }
+
 
     generarInforme = async (formato) => {
         if (formato === 'pdf') {
