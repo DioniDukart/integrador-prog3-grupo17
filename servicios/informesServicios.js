@@ -10,22 +10,22 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default class InformesServicios {
-    
+
     informeReclamosCsv = async (datosReporte) => {
         let ruta = path.resolve(__dirname, '..');
-        ruta = path.join(ruta, '../utilidades/reclamos.csv'); 
+        ruta = path.join(ruta, '../utilidades/reclamos.csv');
 
         // configura escrito csv
         const csvWriter = createObjectCsvWriter({
-            path: ruta, 
+            path: ruta,
             header: [
-                {id: 'reclamo', title: 'RECLAMO'},
-                {id: 'tipo', title: 'TIPO'},
-                {id: 'estado', title: 'ESTADO'},
-                {id: 'fechaCreado', title: 'FECHA CREADO'},
-                {id: 'cliente', title: 'CLIENTE'},
+                { id: 'reclamo', title: 'RECLAMO' },
+                { id: 'tipo', title: 'TIPO' },
+                { id: 'estado', title: 'ESTADO' },
+                { id: 'fechaCreado', title: 'FECHA CREADO' },
+                { id: 'cliente', title: 'CLIENTE' },
             ],
-            encoding:'utf-8' 
+            encoding: 'utf-8'
         });
 
         // genera csv
@@ -36,7 +36,7 @@ export default class InformesServicios {
     }
 
     informeReclamosPdf = async (datosReporte) => {
-        try{
+        try {
             const filePath = path.join(__dirname, '../utilidades/handlebars/informe-reclamos.html');
             const htmlTemplate = fs.readFileSync(filePath, 'utf8');
 
@@ -50,13 +50,13 @@ export default class InformesServicios {
             const page = await browser.newPage();
 
             // cargo el html
-            await page.setContent(htmlFinal, {waitUntil: 'load'});
+            await page.setContent(htmlFinal, { waitUntil: 'load' });
 
             // se genera pdf
             const pdfBuffer = await page.pdf({
-                format:'A4',
+                format: 'A4',
                 printBackground: true,
-                margin: {top: '10px', bottom: '10px' }
+                margin: { top: '10px', bottom: '10px' }
             });
 
             // 
@@ -64,7 +64,7 @@ export default class InformesServicios {
 
             return pdfBuffer;
 
-        }catch(error){
+        } catch (error) {
             console.error('Error generando el PDF:', error);
             throw error;
         }

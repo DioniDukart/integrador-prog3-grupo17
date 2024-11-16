@@ -30,6 +30,15 @@ export default class ReclamosServicios {
         return this.reclamosBD.buscarReclamosUsuario(id);
     }
 
+    buscarReclamosOficina = (id) => {
+        //Switch para verificar el tipo de usuario, y de ahi a distintos metodos en bd?
+        return this.reclamosBD.buscarReclamosOficina(id);
+    }
+
+    obtenerTipoReclamoPorUsuario = (idUsuario) => {
+        return this.reclamosBD.obtenerTipoReclamoPorUsuario(id);
+    }
+
     /* 
     //consulta todos CON PAGINACION
     buscarTodos= (filter,limit,offset,order,asc)=>{

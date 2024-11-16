@@ -88,6 +88,14 @@ export default class ReclamosBD {
         return resultado;
     }
 
+    buscarReclamosOficina = async (id) => {
+        const consultaSql = `SELECT * FROM reclamos WHERE idReclamoTipo = ?`;
+        const [resultado] = await conexion.query(consultaSql, [id]);
+
+        return resultado;
+    }
+
+
     /*
         actualizar = async (idReclamo, reclamo) => {
             const consultaSql = "UPDATE reclamos SET ? WHERE idReclamo=?";
@@ -125,11 +133,9 @@ export default class ReclamosBD {
         const [resultado] = await conexion.query(consultaSql, [idReclamo]);
 
         //return (resultado.length > 0) ? result[0] : null;
-        console.log(resultado);
+        //console.log(resultado);
         return resultado;
-
     }
-
 
     coincidenciaReclamoOficina = async (idUsuario, idReclamo) => {
         const consultaSql = `SELECT r.idReclamo, r.idReclamoTipo AS reclamo_tipo, o.idReclamoTipo AS oficina_tipo
@@ -140,7 +146,7 @@ export default class ReclamosBD {
 
         //const [rows]
         const [resultado] = await conexion.query(consultaSql, [idUsuario, idReclamo]);
-        //return (resultado.length > 0) ? result[0] : null;
+        //return (resultado.length > 0) ? resultado[0] : null;
         //return resultado;
 
         //return rows.length > 0;
@@ -148,10 +154,20 @@ export default class ReclamosBD {
     }
 
 
-    obtenerReclamoPorId = async (idReclamo) => {
-        const consultaSql = "SELECT * FROM reclamos WHERE idReclamo = ?";
+    //a partir de mi id, buscar la oficina a la que pertenezco, y le quito su idReclamoTipo
+    obtenerReclamoPorId = async (idUsuario) => {
+        const consultaSql = "SELECT  FROM reclamos WHERE idReclamo = ?";
         const [reclamo] = await conexion.query(consultaSql, [idReclamo]);
         return reclamo.length > 0 ? reclamo[0] : null;
+    };
+
+    obtenerTipoReclamoPorUsuario = async (idUsuario) => {
+        const consultaSql = `SELECT o.idReclamoTipo FROM oficinas o JOIN usuarios_oficinas uo ON o.idOficina = uo.idOficina WHERE uo.idUsuario = ?;`
+
+        const [tipoReclamo] = await conexion.query(consultaSql, [idUsuario]);
+
+        //return tipoReclamo;
+        return (tipoReclamo.length > 0) ? tipoReclamo[0] : null;
     };
 
     actualizarEstadoReclamo = async (idReclamo, idReclamoEstado) => {

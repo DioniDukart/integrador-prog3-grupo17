@@ -70,6 +70,36 @@ export default class ReclamosControlador {
         }
     }
 
+    buscarReclamosOficina = async (req, res) => {
+        const idUsuario = req.user.idUsuario;
+        //buscar el tipo de su oficina
+        //a partir de mi id, buscar la oficina a la que pertenezco, y le quito su idReclamoTipo
+        //..
+        const tipoReclamo= await this.reclamosServicios.obtenerTipoReclamoPorUsuario(idUsuario);
+        if(!tipoReclamo){
+            res.status(500).json({
+                mensaje: "No se encontro el tipo de reclamo de la oficina del empleado."
+            });
+        };
+
+        try {
+            const resultado = await this.reclamosServicios.buscarReclamosOficina(tipoReclamo);
+
+            if (resultado.length === 0) {
+                res.status(500).json({
+                    mensaje: "No se encontraron resultados de Reclamos del tipo de la oficina del empleado."
+                });
+            }
+
+            res.status(200).json(resultado);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({
+                mensaje: "Error interno en el servidor."
+            });
+        }
+    }
+
     //consulta todos
     buscarTodos = async (req, res) => {
         try {
