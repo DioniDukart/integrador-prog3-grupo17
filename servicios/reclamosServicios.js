@@ -1,12 +1,14 @@
 import ReclamosBD from "../bd/reclamosBD.js";
 import NotificacionesServicios from "./notificacionesServicios.js";
 import UsuariosOficinasBD from "../bd/usuariosOficinasBD.js";
+import InformesServicios from "./informesServicios.js";
 
 export default class ReclamosServicios {
     constructor() {
         this.reclamosBD = new ReclamosBD();
         this.notificacionesServicios = new NotificacionesServicios();
         this.usuariosOficinasBD = new UsuariosOficinasBD();
+        this.informesServicios = new InformesServicios();
     }
 
     crear = (reclamo) => {
@@ -84,28 +86,53 @@ export default class ReclamosServicios {
 
         return this.reclamosBD.crear(idReclamo, reclamo);
     }
-
+    /*
     eliminado = (idReclamo) => {
         return this.reclamosBD.crear(idReclamo);
     }
 
+    atenderReclamo = async (idReclamo, idReclamoEstado, idUsuario) => {
+        const oficinaUsuario = await this.usuariosOficinasBD.obtenerOficinaUsuario(idUsuario);
+        if (!oficinaUsuario) {
+            throw new Error("No tienes una oficina asignada.");
+        }
+
+        const reclamo = await this.reclamosBD.obtenerReclamoPorId(idReclamo);
+        if (!reclamo) {
+            throw new Error("Reclamo no encontrado.");
+        }
+
+        if (reclamo.idOficina !== oficinaUsuario.idOficina) {
+            throw new Error("No puedes atender reclamos de otra oficina.");
+        }
+
+        const exito = await this.reclamosBD.actualizarEstadoReclamo(idReclamo, idReclamoEstado);
+        if (!exito) {
+            throw new Error("Error al actualizar el estado del reclamo.");
+        }
+
+        return { mensaje: "Reclamo actualizado correctamente." };
+
+    }
+    */
+
     notificarCambio = async (idReclamo, datosReclamo) => {
         //verificacion de la existencia del reclamo en la bd
-        const exist = await this.reclamosBD.buscarPorId(idReclamo);
-        if (exist === null) {
-            return { estado: false, mensaje: "No se pudo encontrar reclamo con el ID: " + idReclamo };
+        const existe = await this.reclamosBD.buscarPorId(idReclamo);
+        if (existe === null) {
+            return { estado: false, mensaje: "No se pudo encontrar reclamo nro: " + idReclamo };
         }
 
         //modifico el reclamo en la bd
-        const modifcado = await this.reclamosBD.modificar(idReclamo, datosReclamo);
-        if (!modifcado) {
-            return { estado: false, mensaje: "No se pudo actualizar el reclamo con el ID: " + idReclamo };
+        const modificado = await this.reclamosBD.actualizar(idReclamo, datosReclamo);
+        if (!modificado) {
+            return { estado: false, mensaje: "No se pudo actualizar el reclamo nro: " + idReclamo };
         }
 
         //busco los datos del cliente para armar el correo
         const datosClienteReclamo = await this.reclamosBD.buscarClientePorReclamo(idReclamo);
-        if (!cliente) {
-            return { estado: false, mensaje: "No se pudo encontrar el cliente del reclamo: " + idReclamo };
+        if (!datosClienteReclamo) {
+            return { estado: false, mensaje: "No se pudo encontrar el cliente del reclamo nro: " + idReclamo };
         }
 
         const datosCorreo = {
@@ -114,6 +141,7 @@ export default class ReclamosServicios {
             reclamo: idReclamo,
             estado: datosClienteReclamo[0].estado
         };
+        //console.log("datos correo "+{datosCorreo});
 
         //envio el correo y retorno
         return await this.notificacionesServicios.enviarCorreo(datosCorreo);
@@ -123,71 +151,42 @@ export default class ReclamosServicios {
         // verificar si existe el reclamo y se puede modificar
         const existe = await this.reclamosBD.esCancelable(idReclamo);
         if (existe === null) {
-            return { estado: false, mensaje: 'idReclamo no existe / Ya no se puede cancelar.' };
+            return { estado: false, mensaje: 'El reclamo con ese id no existe o no se puede cancelar.' };
         }
 
-
-        const modificado = await this.reclamosBD.modificar(idReclamo, datosReclamo); 
-        
-        if (!modificado){
-            return {estado: false, mensaje: 'Reclamo no cancelado'};
+        const modificado = await this.reclamosBD.actualizar(idReclamo, datosReclamo);
+        if (!modificado) {
+            return { estado: false, mensaje: 'Reclamo no cancelado' };
 
         }
 
         // buscar los datos del cliente
-        const cliente = await this.reclamos.buscarInformacionClientePorReclamo(idReclamo);
-        if (!cliente) {
+        const datosClienteReclamo = await this.reclamos.buscarInformacionClientePorReclamo(idReclamo);
+        if (!datosClienteReclamo) {
             return { estado: false, mensaje: 'Faltan datos de cliente' };
         }
 
         const datosCorreo = {
-            nombre: cliente[0].cliente,
-            correoElectronico: cliente[0].correoElectronico,
+            nombre: datosClienteReclamo[0].nombre,
+            correoElectronico: datosClienteReclamo[0].correoElectronico,
             reclamo: idReclamo,
-            estado: cliente[0].estado,
+            estado: datosClienteReclamo[0].estado,
         }
-        // enviar la notificacion
 
-        return await this.notificaciones.enviarCorreo(datosCorreo);
+        // enviar la notificacion
+        return await this.notificacionesServicios.enviarCorreo(datosCorreo);
     }
 
     coincidenciaReclamoOficina = async (idUsuario, idReclamo) => {
-        return await this.reclamosBD.coincidenciaReclamoOficina(idUsuario, idReclamo); 
+        return await this.reclamosBD.coincidenciaReclamoOficina(idUsuario, idReclamo);
     }
-  
-  
-    atenderReclamo = async (idReclamo, idReclamoEstado, idUsuario) => {
-            const oficinaUsuario = await this.usuariosOficinasBD.obtenerOficinaUsuario(idUsuario);
-            if (!oficinaUsuario) {
-                throw new Error("No tienes una oficina asignada.");
-            }
-    
-            const reclamo = await this.reclamosBD.obtenerReclamoPorId(idReclamo);
-            if (!reclamo) {
-                throw new Error("Reclamo no encontrado.");
-            }
-    
-            if (reclamo.idOficina !== oficinaUsuario.idOficina) {
-                throw new Error("No puedes atender reclamos de otra oficina.");
-            }
-    
-            const exito = await this.reclamosBD.actualizarEstadoReclamo(idReclamo, idReclamoEstado);
-            if (!exito) {
-                throw new Error("Error al actualizar el estado del reclamo.");
-            }
-    
-            return { mensaje: "Reclamo actualizado correctamente." };
-                 
-    }
+
+
     generarInforme = async (formato) => {
         if (formato === 'pdf') {
-
             return await this.reportePdf();
-
-        }else if (formato === 'csv'){
-            
+        } else if (formato === 'csv') {
             return await this.reporteCsv();
-
         }
     }
 
@@ -195,11 +194,11 @@ export default class ReclamosServicios {
         const datosReporte = await this.reclamosBD.buscarDatosReportePdf();
 
         if (!datosReporte || datosReporte.length === 0) {
-            return { estado: false, mensaje: 'Sin datos para el reporte'};
+            return { estado: false, mensaje: 'Sin datos para el reporte' };
         }
 
-        const pdf = await this.informes.informeReclamosPdf(datosReporte);
-        
+        const pdf = await this.informesServicios.informeReclamosPdf(datosReporte);
+
         return {
             buffer: pdf,
             headers: {
@@ -213,10 +212,10 @@ export default class ReclamosServicios {
         const datosReporte = await this.reclamosBD.buscarDatosReporteCsv();
 
         if (!datosReporte || datosReporte.length === 0) {
-            return {estado: false, mensaje: 'Sin datos para el reporte'};
+            return { estado: false, mensaje: 'Sin datos para el reporte' };
         }
 
-        const csv =  await this.informes.informeReclamosCsv(datosReporte);
+        const csv = await this.informesServicios.informeReclamosCsv(datosReporte);
         return {
             path: csv,
             headers: {
@@ -226,7 +225,7 @@ export default class ReclamosServicios {
         };
 
     }
-    
+
 
 }
 

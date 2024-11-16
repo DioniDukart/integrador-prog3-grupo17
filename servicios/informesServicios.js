@@ -13,7 +13,7 @@ export default class InformesServicios {
     
     informeReclamosCsv = async (datosReporte) => {
         let ruta = path.resolve(__dirname, '..');
-        ruta = path.join(ruta, '/utiles/reclamos.csv'); 
+        ruta = path.join(ruta, '../utilidades/reclamos.csv'); 
 
         // configura escrito csv
         const csvWriter = createObjectCsvWriter({
@@ -37,7 +37,7 @@ export default class InformesServicios {
 
     informeReclamosPdf = async (datosReporte) => {
         try{
-            const filePath = path.join(__dirname, '../utiles/handlebars/plantilla-informe.html');
+            const filePath = path.join(__dirname, '../utilidades/handlebars/informe-reclamos.html');
             const htmlTemplate = fs.readFileSync(filePath, 'utf8');
 
             const template = handlebars.compile(htmlTemplate);

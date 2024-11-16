@@ -1,5 +1,5 @@
 import UsuariosServicios from "../servicios/usuariosServicios.js";
-import {createHash} from "crypto";
+import { createHash } from "crypto";
 
 export default class UsuariosControlador {
     constructor() {
@@ -12,7 +12,6 @@ export default class UsuariosControlador {
             const { nombre, apellido, correoElectronico, contrasenia, idTipoUsuario, imagen } = req.body;
 
             //verifico requeridos
-
             if (!nombre || !apellido || !correoElectronico || !contrasenia || !idTipoUsuario) {
                 return res.status(404).json({
                     mensaje: "Falta/n parametro/s obligatorio/s."
@@ -25,8 +24,7 @@ export default class UsuariosControlador {
                 })
             }
             */
-            const contraseniaHash= createHash('sha256').update(contrasenia).digest('hex');
-            //console.log(contrasenia+" pasa a ser "+contraseniaHash);
+            const contraseniaHash = createHash('sha256').update(contrasenia).digest('hex');
             const usuario = {
                 nombre: nombre,
                 apellido: apellido,
@@ -38,21 +36,24 @@ export default class UsuariosControlador {
 
             const resultado = await this.usuariosServicios.crear(usuario);
 
+            if (resultado.estado) {
+                res.status(201).send({ estado: "OK", data: resultado.data }); //mensaje: "Reclamo creado."
+            } else {
+                res.status(404).send({ estado: "Falla", mensaje: resultado.mensaje });
+            }
+            /* 
             if (resultado.affectedRows === 0) {
                 return res.status(404).json({
                     mensaje: "No se pudo crear."
                 });
             }
+                */
             //puedo usar resultado.insertId para ya traerme/verificar/mostrar la entrada creada
 
             //res.status(200).json(resultado);
-            res.status(200).json({
-                mensaje: "Reclamo creado." /*post(resultado.insertId) O ,dato:resultado*/
-            });
-
         } catch (err) {
             res.status(500).json({
-                mensaje: "Error", err:err 
+                estado: "Fallo.", mensaje: "Error interno en servidor.", err: err
             });
         };
     }
@@ -121,10 +122,6 @@ export default class UsuariosControlador {
         }
 
         try {
-            /*
-            const consultaSql = "SELECT * FROM usuarios WHERE activo=1 AND idUsuario=?";
-            const [resultado] = await conexion.query(consultaSql, [id]);
-             */
             const resultado = await this.usuariosServicios.buscarPorId(id);
             /*
             if (resultado.length === 0) {
@@ -148,51 +145,57 @@ export default class UsuariosControlador {
     }
 
     actualizar = async (req, res) => {
-        const id = req.params.idUsuario;
+        const idUsuario = req.params.idUsuario;
 
-        const cuerpo = req.body;
+        const datos = req.body;
 
-        if (id === null || id === undefined) {
+        if (idUsuario === null || idUsuario === undefined) {
             res.status(404).json({ status: "Fallo", data: { error: "El parametro no puede ser vacio." } });
         }
-        if (!this.buscarPorId(id)) {//seria mas conveniente llamar otra capa?desconozco
-            res.status(404).json({ status: "Fallo", data: { error: "No existe usuario con el id ingresado." } });
-        }
         /*
-        //si idUsuarioTipo tiene un valor valido, verifico que sea un numero y que no este fuera del rango de valores valido
-        if(cuerpo.idUsuarioTipo){
-            let num= Number(cuerpo.idUsuarioTipo);
-            if (num<3 ||num>1){//podria verificar que tambien sea menor a algo?
-                res.status(404).json({ status: "Fallo", data: { error: "El valor para el campo estado de reclamo no es valido." } });
-            }
+        if (!this.buscarPorId(idUsuario)) {//mas conveniente llamar en servicios? segun lo hecho por cristian si, asumia que antes era mejor
+            res.status(404).json({ status: "Fallo", data: { error: "No existe usuario con el id ingresado." } });
         }
         */
 
-        try {
-            const usuarioActualizado = await this.usuariosServicios.actualizar(id, cuerpo);
+        if (Object.keys(datos).length === 0) {
+            return res.status(400).send({
+                estado: "Falla",
+                mensaje: "No se enviaron datos para pode modificar."
+            });
+        }
 
+        try {
+            const usuarioActualizado = await this.usuariosServicios.actualizar(idUsuario, datos);
+
+            /*
             res.status(204).json({
                 usuarioActualizado
             });
+            */
+            if (usuarioActualizado.estado) {
+                res.status(200).send({ estado: "OK", mensaje: usuarioActualizado.mensaje });
+            } else {
+                res.status(404).send({ estado: "Falla", mensaje: usuarioActualizado.mensaje });
+            }
         } catch (error) {
-            res.status(500).json({
-                mensaje: "Error"
+            res.status(500).send({
+                estado: "Falla.", mensaje: "Error interno en servidor."
             });
         }
     }
-    // método para actualizar el perfil de un cliente
+
+    // método para que un cliente (idTipoUsuario=3) actualice su perfil
     actualizarPerfilCliente = async (req, res) => {
+        const idUsuario = req.user.idUsuario;
+        const datosActualizados = req.body;
+
+        // Validar que los datos requeridos estén presentes
+        if (!idUsuario || !datosActualizados) {
+            return res.status(400).json({ mensaje: "Falta información para actualizar el perfil" });
+        }
+
         try {
-            
-            const idUsuario= req.user.idUsuario;
-            //const idUsuario = req.params.idUsuario;
-            const datosActualizados = req.body;
-
-            // Validar que los datos requeridos estén presentes
-            if (!idUsuario || !datosActualizados) {
-                return res.status(400).json({ mensaje: "Falta información para actualizar el perfil" });
-            }
-
             // Llamar al servicio para actualizar
             const resultado = await this.usuariosServicios.actualizarPerfilCliente(idUsuario, datosActualizados);
 
@@ -248,14 +251,14 @@ export default class UsuariosControlador {
                     mensaje: "Falta/n parametro/s obligatorio/s."
                 })
             }
-            
-            if(this.usuariosServicios.buscarPorCorreo(correoElectronico)){
+
+            if (this.usuariosServicios.buscarPorCorreo(correoElectronico)) {
                 return res.status(404).json({
                     mensaje: "Ya existe un usuario con esa direccion de correo."
                 })
             }
-            
-            const contraseniaHash= createHash('sha256').update(contrasenia).digest('hex');
+
+            const contraseniaHash = createHash('sha256').update(contrasenia).digest('hex');
             //console.log(contrasenia+" pasa a ser "+contraseniaHash);
             const usuario = {
                 nombre: nombre,
@@ -398,34 +401,6 @@ export default class UsuariosControlador {
             });
         }
     }
-    /*
-     // Actualiza perfil de cliente si el idTipoUsuario es 3
-     actualizarPerfilCliente = async (req, res) => {
-        const id = req.params.idUsuario;
-        const cuerpo = req.body;
 
-        if (!id) {
-            return res.status(404).json({ mensaje: "El parametro idUsuario no puede ser vacío." });
-        }
-
-        try {
-            const usuario = await this.usuariosServicios.buscarPorId(id);
-
-            if (!usuario) {
-                return res.status(404).json({ mensaje: "No existe usuario con el id ingresado." });
-            }
-
-            // Verificar que el idTipoUsuario del usuario sea 3 (Cliente)
-            if (usuario.idTipoUsuario !== 3) {
-                return res.status(403).json({ mensaje: "Solo los usuarios tipo Cliente pueden actualizar su perfil." });
-            }
-
-            const usuarioActualizado = await this.usuariosServicios.actualizar(id, cuerpo);
-            res.status(200).json({ mensaje: "Perfil de cliente actualizado exitosamente.", usuarioActualizado });
-        } catch (error) {
-            res.status(500).json({ mensaje: "Error al actualizar el perfil de cliente." });
-        }
-    }
-    */
 
 }

@@ -61,7 +61,7 @@ export default class UsuariosTiposControlador {
             });
         }
     }
-    
+
     //consulta un unico segun su id
     buscarPorId = async (req, res) => {
         const id = req.params.idUsuarioTipo;
@@ -102,7 +102,7 @@ export default class UsuariosTiposControlador {
 
         const cuerpo = req.body;
 
-        if (id===null || id===undefined) {
+        if (id === null || id === undefined) {
             res.status(404).json({ status: "Fallo", data: { error: "El parametro no puede ser vacio." } });
         }
         if (!this.buscarPorId(id)) {//seria mas conveniente llamar otra capa?desconozco
@@ -132,19 +132,19 @@ export default class UsuariosTiposControlador {
         }
 
         try {
-            const resultado= await this.usuariosTiposServicios.eliminar(id);
-            
+            const resultado = await this.usuariosTiposServicios.eliminar(id);
+
             //res.status(204).send();
             if (resultado.affectedRows === 0) {
                 res.status(404).json({
                     mensaje: "No se pudo dar de baja."
                 });
             }
-            
+
             res.status(204).json({
                 mensaje: `Usuario ${id} dado de baja.`
             });
-            
+
         } catch (error) {
             res.status(500).json({
                 mensaje: "Error"

@@ -9,11 +9,11 @@ const router = express.Router();
 const usuariosControlador = new UsuariosControlador();
 
 //estas completan la url del app.use en index
-router.post("/", usuariosControlador.crear);
-router.get("/", usuariosControlador.buscarTodos);
-router.get("/:idUsuario", usuariosControlador.buscarPorId);
-router.put("/:idUsuario", usuariosControlador.actualizar);
-router.patch("/:idUsuario", usuariosControlador.eliminar);
+router.post("/", autorizarUsuario([1]), usuariosControlador.crear);
+router.get("/", autorizarUsuario([1]), usuariosControlador.buscarTodos);
+router.get("/:idUsuario", autorizarUsuario([1]), usuariosControlador.buscarPorId);
+router.put("/:idUsuario", autorizarUsuario([1]), usuariosControlador.actualizar);
+router.patch("/:idUsuario", autorizarUsuario([1]), usuariosControlador.eliminar);
 
 
 //idTipoUsuario, 1=Admin 2=Empleado 3=Cliente

@@ -139,25 +139,32 @@ export default class OficinasControlador {
 
     // Agregar un empleado a una oficina
     agregarEmpleado = async (req, res) => {
-        const idOficina = req.params.idUsuario;
+        const idOficina = req.params.idOficina;
         const { idUsuario } = req.body;
-
+        //console.log("agregarEmpleado en oficinasControlador ", idOficina, " ", idUsuario);
         if (!idOficina || !idUsuario) {
             return res.status(400).json({ mensaje: "Faltan parámetros" });
         }
 
         try {
             const ocupado = await this.oficinasServicios.tieneOficina(idUsuario);
+            /*
             if (ocupado.affectedRows !== 0) {
                 return res.status(400).json({
                     mensaje: "El empleado ya tiene otra oficina asignada."
                 });
             }
-
-            const resultado = await this.oficinasServicios.agregarEmpleado(idOficina, idUsuario);
+            */
+            console.log(ocupado);
+            if (ocupado.length > 0) {
+                return res.status(400).json({
+                    mensaje: "El empleado ya tiene otra oficina asignada."
+                });
+            }
+            const resultado = await this.oficinasServicios.agregarEmpleado(idUsuario, idOficina);
             res.status(200).json(resultado);
         } catch (error) {
-            console.error(error);
+            //console.error("error en agregarEmpleado " + error);
             res.status(500).json({ mensaje: "Error al agregar el empleado a la oficina" });
         }
     };

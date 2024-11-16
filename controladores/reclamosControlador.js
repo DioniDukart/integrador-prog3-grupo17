@@ -50,7 +50,7 @@ export default class ReclamosControlador {
         };
     }
 
-    buscarReclamosUsuario= async (req, res) => {
+    buscarReclamosUsuario = async (req, res) => {
         const idUsuario = req.user.idUsuario;
         try {
             const resultado = await this.reclamosServicios.buscarReclamosUsuario(idUsuario);
@@ -234,9 +234,9 @@ export default class ReclamosControlador {
     atenderReclamo = async (req, res) => {
         try {
             const idReclamo = req.params.idReclamo;
-            const idReclamoEstado = req.body.idReclamoEstado;
-            console.log("idReclamoEstado: ", idReclamo);
-            console.log("idReclamoEstado: ", idReclamoEstado);
+            const idReclamoEstado = req.body.idReclamoEstado; //el nuevo estado de reclamo recibido por cuerpo de solicitud
+            const idUsuario= req.user.idUsuario;
+
             if (idReclamoEstado === undefined) {
                 return res.status(400).send({
                     estado: "Falla",
@@ -253,34 +253,29 @@ export default class ReclamosControlador {
                 })
             }
 
-            //Controlar la pertenencia a la misma oficina entre usuario y reclamo? Token? Como se quien es el usuario? req.user?
             //Averiguo el idOficina buscando en usuarios-oficinas la que tenga el idUsuario, el cual saco del token
             //Luego verifico el idReclamoTipo de la misma oficina
             //Finalmente veo si el idReclamoTipo de la oficina, es el mismo idReclamoTipo del Reclamo
             /*
             //{"idUsuario": 16,  "usuario": "Dionisio Dukart",  "idTipoUsuario"=1}
             */
-            const coincidencia= await this.reclamosServicios.coincidenciaReclamoOficina(req.user.idUsuario, idReclamo);//trae true o  false
-            console.log("coincidencia: ", coincidencia);
-            //if(req.user.idUsuario==oficina.) 
-            if(!coincidencia){
+            const coincidencia = await this.reclamosServicios.coincidenciaReclamoOficina(idUsuario, idReclamo);//trae true o  false
+            //console.log("coincidencia: ", coincidencia);
+            if (!coincidencia) {
                 return res.status(400).send({
                     estado: "Falla",
                     mensaje: "El tipo del reclamo no pertenece a la oficina del empleado."
                 })
             }
-            
 
             let dato = {
                 idReclamoEstado
             }
 
-
-            if (idReclamoEstado == 4) {//si es finalizado, creo su fecha
-                //console.log("Entramos a id if 4");
-                const fechaFinalizado = new Date().toISOString().slice(0, 19).replace('T', ' ');
-                dato.fechaFinalizado = fechaFinalizado;//y la agrego al objeto dato
-               // console.log("Fecha Finalizado: ", fechaFinalizado);
+            if (idReclamoEstado == 4) {//si es finalizado 
+                const fechaFinalizado = new Date().toISOString().slice(0, 19).replace('T', ' '); //creo fecha
+                dato.fechaFinalizado = fechaFinalizado;//la agrego al objeto dato
+                dato.idUsuarioFinalizador= idUsuario;//y agrego el id de usuario finalizador sacado del token
             }
 
             //console.log("dato: ", dato);
@@ -294,11 +289,11 @@ export default class ReclamosControlador {
 
         } catch (error) {
             res.status(500).send({
-                estado: "Falla", mensaje: "Error interno en servidor.", error:error
+                estado: "Falla", mensaje: "Error interno en servidor.", error: error
             });
         }
     }
-    
+
     cancelarReclamo = async (req, res) => {
         try {
             const idReclamo = req.params.idReclamo;
@@ -317,7 +312,6 @@ export default class ReclamosControlador {
                 fechaCancelado: new Date().toISOString().slice(0, 19).replace('T', ' ')  // yyyy-mm-dd hh:mm:ss
             };
 
-
             const reclamoCancelado = await this.reclamosServicios.cancelarReclamo(idReclamo, dato);
 
             if (reclamoCancelado.estado) {
@@ -327,76 +321,28 @@ export default class ReclamosControlador {
             }
         } catch (error) {
             res.status(500).send({
-                estado: "Falla", mensaje: "Error interno en servidor.", error:error
-            });
-        }
-        
-
-    }
-    
-    /*
-    atenderReclamo = async (req, res) => {
-        try {
-            const idReclamo = req.params.idReclamo;
-            const idReclamoEstado = req.body.idReclamoEstado;
-            const idUsuario = req.user.id; // ID del usuario autenticado (asumimos que viene de la sesión o JWT)
-
-            if (idReclamoEstado === undefined) {
-                return res.status(400).send({
-                    estado: "Falla",
-                    mensaje: "Falta el id del estado de reclamo."
-                });
-            }
-
-            // 1. Obtener la oficina del usuario (empleado)
-            const oficinaUsuario = await this.usuariosOficinasBD.obtenerOficinaUsuario(idUsuario);
-            if (!oficinaUsuario) {
-                return res.status(403).json({ mensaje: "No tienes una oficina asignada." });
-            }
-
-            // 2. Verificar que el reclamo pertenece a la oficina del usuario
-            const reclamo = await this.reclamosServicios.buscarPorId(idReclamo);
-            if (!reclamo) {
-                return res.status(404).json({ mensaje: "Reclamo no encontrado." });
-            }
-
-            if (reclamo.idOficina !== oficinaUsuario) {
-                return res.status(403).json({ mensaje: "No puedes atender reclamos de otra oficina." });
-            }
-
-            // 3. Actualizar el estado del reclamo
-            const dato = { idReclamoEstado };
-            const reclamoModificado = await this.reclamosServicios.notificarCambio(idReclamo, dato);
-
-            if (reclamoModificado.estado) {
-                res.status(200).send({ estado: "OK", mensaje: reclamoModificado.mensaje });
-            } else {
-                res.status(404).send({ estado: "Falla", mensaje: reclamoModificado.mensaje });
-            }
-
-        } catch (error) {
-            res.status(500).send({
-                estado: "Falla", mensaje: "Error interno en servidor."
+                estado: "Falla", mensaje: "Error interno en servidor.", error: error
             });
         }
     }
-        */
+
+
     informe = async (req, res) => {
 
-        try{
+        try {
             const formato = req.query.formato;
-            if(!formato || !formatosPermitidos.includes(formato)){
+            if (!formato || !formatosPermitidos.includes(formato)) {
                 return res.status(400).send({
-                    estado:"Falla",
-                    mensaje: "Formato inválido para el informe."    
+                    estado: "Falla",
+                    mensaje: "Formato inválido para el informe."
                 })
             }
-            
+
             // genera informe
-            const {buffer, path, headers} = await this.reclamosServicios.generarInforme(formato);
+            const { buffer, path, headers } = await this.reclamosServicios.generarInforme(formato);
 
             // configura cabecera de respuesta 
-            res.set(headers)
+            res.set(headers);
 
             if (formato === 'pdf') {
                 // respuesta a cliente  
@@ -406,18 +352,18 @@ export default class ReclamosControlador {
                 res.status(200).download(path, (err) => {
                     if (err) {
                         return res.status(500).send({
-                            estado:"Falla",
-                            mensaje: " No se pudo generar el informe."    
+                            estado: "Falla",
+                            mensaje: " No se pudo generar el informe."
                         })
                     }
-                })
+                });
             }
-        }catch(error){
+        } catch (error) {
             console.log(error)
             res.status(500).send({
-                estado:"Falla", mensaje: "Error interno en servidor."
+                estado: "Falla", mensaje: "Error interno en servidor."
             });
-        } 
+        }
     }
 
 }

@@ -56,22 +56,22 @@ export default class OficinasBD {
         return { mensaje: "El empleado fue quitado de la oficina correctamente" };
     };
     */
-    
+
     //pulidos??
-    agregarEmpleado = async (idOficina, idUsuario) => {
-        const consultaSql = "CREATE usuarios_oficinas SET idOficina=?, idUsuario=?";
-        await conexion.query(consultaSql, [idOficina, idUsuario]);
+    agregarEmpleado = async (idUsuario, idOficina) => {
+        const consultaSql = "INSERT INTO usuarios_oficinas SET idUsuario=?, idOficina=?, activo=1";
+        await conexion.query(consultaSql, [idUsuario, idOficina]);
         return { mensaje: "Empleado agregado a la oficina correctamente" };
     };
     tieneOficina = async (idUsuario) => {
-         const consultaSql = "SELECT idUsuarioOficina from usuarios_oficinas WHERE idUsuario=? AND activo=1";
-         const [resultado]= await conexion.query(consultaSql, [idOficina, idUsuario]);
-         return resultado;
+        const consultaSql = "SELECT idUsuarioOficina from usuarios_oficinas WHERE idUsuario=? AND activo=1";
+        const [resultado] = await conexion.query(consultaSql, [idUsuario]);
+        return resultado;
     };
     quitarEmpleado = async (idOficina, idUsuario) => {
         const consultaSql = "UPDATE usuarios_oficinas SET activo=0 WHERE idOficina=? AND idUsuario=? ";
         await conexion.query(consultaSql, [idOficina, idUsuario]);
         return { mensaje: "El empleado fue quitado de la oficina correctamente" };
     };
-    
+
 }

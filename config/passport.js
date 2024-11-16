@@ -15,15 +15,12 @@ const estrategia = new LocalStrategy(
         try {
             const usuariosServicios = new UsuariosServicios();
             const usuario = await usuariosServicios.buscarLogin(correoElectronico, contrasenia);
-            // console.log(correoElectronico, " ", contrasenia);  
-            console.log(usuario.usuario+ " estrategia en passport.js");
-            console.log(!usuario+ " estrategia en passport.js");
             if (!usuario) {
                 return done(null, false, { mensaje: "Login incorrecto." });
             }
             return done(null, usuario, { mensaje: "Login correcto." });
         } catch (exc) {
-            
+
             done(exc);
         }
     }
