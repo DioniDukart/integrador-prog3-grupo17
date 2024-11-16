@@ -231,58 +231,12 @@ export default class ReclamosControlador {
         }
     }
 
-
-    /*
     atenderReclamo = async (req, res) => {
         try {
             const idReclamo = req.params.idReclamo;
-            const idReclamoEstado = req.body.idReclamoEstado;
-            const idUsuario = req.user.id; // ID del usuario autenticado (asumimos que viene de la sesión o JWT)
+            const idReclamoEstado = req.body.idReclamoEstado; //el nuevo estado de reclamo recibido por cuerpo de solicitud
+            const idUsuario= req.user.idUsuario;
 
-            if (idReclamoEstado === undefined) {
-                return res.status(400).send({
-                    estado: "Falla",
-                    mensaje: "Falta el id del estado de reclamo."
-                });
-            }
-
-            // 1. Obtener la oficina del usuario (empleado)
-            const oficinaUsuario = await this.usuariosOficinasBD.obtenerOficinaUsuario(idUsuario);
-            if (!oficinaUsuario) {
-                return res.status(403).json({ mensaje: "No tienes una oficina asignada." });
-            }
-
-            // 2. Verificar que el reclamo pertenece a la oficina del usuario
-            const reclamo = await this.reclamosServicios.buscarPorId(idReclamo);
-            if (!reclamo) {
-                return res.status(404).json({ mensaje: "Reclamo no encontrado." });
-            }
-
-            if (reclamo.idOficina !== oficinaUsuario) {
-                return res.status(403).json({ mensaje: "No puedes atender reclamos de otra oficina." });
-            }
-
-            // 3. Actualizar el estado del reclamo
-            const dato = { idReclamoEstado };
-            const reclamoModificado = await this.reclamosServicios.notificarCambio(idReclamo, dato);
-
-            if (reclamoModificado.estado) {
-                res.status(200).send({ estado: "OK", mensaje: reclamoModificado.mensaje });
-            } else {
-                res.status(404).send({ estado: "Falla", mensaje: reclamoModificado.mensaje });
-            }
-
-        } catch (error) {
-            res.status(500).send({
-                estado: "Falla", mensaje: "Error interno en servidor."
-            });
-        }
-    }
-    */
-    atenderReclamo = async (req, res) => {
-        try {
-            const idReclamo = req.params.idReclamo;
-            const idReclamoEstado = req.body.idReclamoEstado;
             if (idReclamoEstado === undefined) {
                 return res.status(400).send({
                     estado: "Falla",
@@ -305,9 +259,8 @@ export default class ReclamosControlador {
             /*
             //{"idUsuario": 16,  "usuario": "Dionisio Dukart",  "idTipoUsuario"=1}
             */
-            const coincidencia = await this.reclamosServicios.coincidenciaReclamoOficina(req.user.idUsuario, idReclamo);//trae true o  false
+            const coincidencia = await this.reclamosServicios.coincidenciaReclamoOficina(idUsuario, idReclamo);//trae true o  false
             //console.log("coincidencia: ", coincidencia);
-            //if(req.user.idUsuario==oficina.) 
             if (!coincidencia) {
                 return res.status(400).send({
                     estado: "Falla",
@@ -319,11 +272,10 @@ export default class ReclamosControlador {
                 idReclamoEstado
             }
 
-            if (idReclamoEstado == 4) {//si es finalizado, creo su fecha
-                //console.log("Entrando a if ifReclamoEstado 4");
-                const fechaFinalizado = new Date().toISOString().slice(0, 19).replace('T', ' ');
-                dato.fechaFinalizado = fechaFinalizado;//y la agrego al objeto dato
-                // console.log("Fecha Finalizado: ", fechaFinalizado);
+            if (idReclamoEstado == 4) {//si es finalizado 
+                const fechaFinalizado = new Date().toISOString().slice(0, 19).replace('T', ' '); //creo fecha
+                dato.fechaFinalizado = fechaFinalizado;//la agrego al objeto dato
+                dato.idUsuarioFinalizador= idUsuario;//y agrego el id de usuario finalizador sacado del token
             }
 
             //console.log("dato: ", dato);
@@ -360,7 +312,6 @@ export default class ReclamosControlador {
                 fechaCancelado: new Date().toISOString().slice(0, 19).replace('T', ' ')  // yyyy-mm-dd hh:mm:ss
             };
 
-
             const reclamoCancelado = await this.reclamosServicios.cancelarReclamo(idReclamo, dato);
 
             if (reclamoCancelado.estado) {
@@ -373,8 +324,6 @@ export default class ReclamosControlador {
                 estado: "Falla", mensaje: "Error interno en servidor.", error: error
             });
         }
-
-
     }
 
 
@@ -393,7 +342,7 @@ export default class ReclamosControlador {
             const { buffer, path, headers } = await this.reclamosServicios.generarInforme(formato);
 
             // configura cabecera de respuesta 
-            res.set(headers)
+            res.set(headers);
 
             if (formato === 'pdf') {
                 // respuesta a cliente  
@@ -407,7 +356,7 @@ export default class ReclamosControlador {
                             mensaje: " No se pudo generar el informe."
                         })
                     }
-                })
+                });
             }
         } catch (error) {
             console.log(error)

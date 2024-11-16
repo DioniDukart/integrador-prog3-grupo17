@@ -1,12 +1,14 @@
 import ReclamosBD from "../bd/reclamosBD.js";
 import NotificacionesServicios from "./notificacionesServicios.js";
 import UsuariosOficinasBD from "../bd/usuariosOficinasBD.js";
+import InformesServicios from "./informesServicios.js";
 
 export default class ReclamosServicios {
     constructor() {
         this.reclamosBD = new ReclamosBD();
         this.notificacionesServicios = new NotificacionesServicios();
         this.usuariosOficinasBD = new UsuariosOficinasBD();
+        this.informesServicios = new InformesServicios();
     }
 
     crear = (reclamo) => {
@@ -170,9 +172,9 @@ export default class ReclamosServicios {
             reclamo: idReclamo,
             estado: datosClienteReclamo[0].estado,
         }
-        
+
         // enviar la notificacion
-        return await this.notificaciones.enviarCorreo(datosCorreo);
+        return await this.notificacionesServicios.enviarCorreo(datosCorreo);
     }
 
     coincidenciaReclamoOficina = async (idUsuario, idReclamo) => {
@@ -182,13 +184,9 @@ export default class ReclamosServicios {
 
     generarInforme = async (formato) => {
         if (formato === 'pdf') {
-
             return await this.reportePdf();
-
         } else if (formato === 'csv') {
-
             return await this.reporteCsv();
-
         }
     }
 
@@ -199,7 +197,7 @@ export default class ReclamosServicios {
             return { estado: false, mensaje: 'Sin datos para el reporte' };
         }
 
-        const pdf = await this.informes.informeReclamosPdf(datosReporte);
+        const pdf = await this.informesServicios.informeReclamosPdf(datosReporte);
 
         return {
             buffer: pdf,
@@ -217,7 +215,7 @@ export default class ReclamosServicios {
             return { estado: false, mensaje: 'Sin datos para el reporte' };
         }
 
-        const csv = await this.informes.informeReclamosCsv(datosReporte);
+        const csv = await this.informesServicios.informeReclamosCsv(datosReporte);
         return {
             path: csv,
             headers: {
