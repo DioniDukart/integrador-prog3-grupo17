@@ -2,9 +2,11 @@ import express from "express";
 import UsuariosControlador from "../../controladores/usuariosControlador.js";
 import autorizarUsuario from '../../middlewares/autorizarUsuario.js';
 
-//import passport from "passport";
+import { storage } from "../../config/multer.js";
 
 const router = express.Router();
+
+const upload = multer({ storage });
 
 const usuariosControlador = new UsuariosControlador();
 
@@ -14,7 +16,6 @@ router.get("/", autorizarUsuario([1]), usuariosControlador.buscarTodos);
 router.get("/:idUsuario", autorizarUsuario([1]), usuariosControlador.buscarPorId);
 router.put("/:idUsuario", autorizarUsuario([1]), usuariosControlador.actualizar);
 router.patch("/:idUsuario", autorizarUsuario([1]), usuariosControlador.eliminar);
-
 
 //idTipoUsuario, 1=Admin 2=Empleado 3=Cliente
 //averiguar por que no funcionaba como solo '/empleadosTodos'
@@ -34,5 +35,5 @@ router.patch("/empleados/eliminar/:idUsuario", autorizarUsuario([1]), usuariosCo
 router.patch("/:idUsuario", usuariosControlador.actualizarParcialmente);
 */
 // Ruta específica para actualizar el perfil del cliente
-router.put("/actualizarPerfilCliente/:idUsuario", autorizarUsuario([3]), usuariosControlador.actualizarPerfilCliente);
+router.patch("/actualizarPerfilCliente/:idUsuario", upload.single("imagen"), autorizarUsuario([3]), usuariosControlador.actualizarPerfilCliente);
 export { router };

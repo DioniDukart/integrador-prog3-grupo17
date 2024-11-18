@@ -82,11 +82,22 @@ export default class ReclamosBD {
     }
 
     buscarReclamosUsuario = async (idUsuario) => {
-        const consultaSql = `SELECT * FROM reclamos WHERE idUsuarioCreador = ?`;
+        const consultaSql = `SELECT r.idReclamo, r.asunto, r.descripcion, r.fechaCreado, r.fechaFinalizado, r.fechaCancelado, re.descripcion, rt.descripcion FROM reclamos r 
+        INNER JOIN reclamos_estado AS re ON re.idReclamoEstado=r.idReclamoEstado 
+        INNER JOIN reclamos_tipo AS rt ON rt.idReclamoTipo=r.idReclamoTipo 
+        WHERE r.idUsuarioCreador = ?`;
         const [resultado] = await conexion.query(consultaSql, [idUsuario]);
 
         return resultado;
     }
+
+    buscarReclamosOficina = async (id) => {
+        const consultaSql = `SELECT * FROM reclamos WHERE idReclamoTipo = ?`;
+        const [resultado] = await conexion.query(consultaSql, [id]);
+
+        return resultado;
+    }
+
 
     /*
         actualizar = async (idReclamo, reclamo) => {
@@ -102,7 +113,6 @@ export default class ReclamosBD {
     eliminar = async (idReclamo) => {
         //const consultaSql= "UPDATE reclamos SET activo=0 WHERE idReclamo=?";//reclamo no tiene campo "activo"
         const consultaSql = "DELETE FROM reclamos WHERE idReclamo=?";
-
         const [resultado] = await this.conexion.query(consultaSql, idReclamo);
 
         return resultado;
@@ -125,11 +135,9 @@ export default class ReclamosBD {
         const [resultado] = await conexion.query(consultaSql, [idReclamo]);
 
         //return (resultado.length > 0) ? result[0] : null;
-        console.log(resultado);
+        //console.log(resultado);
         return resultado;
-
     }
-
 
     coincidenciaReclamoOficina = async (idUsuario, idReclamo) => {
         const consultaSql = `SELECT r.idReclamo, r.idReclamoTipo AS reclamo_tipo, o.idReclamoTipo AS oficina_tipo
@@ -140,7 +148,7 @@ export default class ReclamosBD {
 
         //const [rows]
         const [resultado] = await conexion.query(consultaSql, [idUsuario, idReclamo]);
-        //return (resultado.length > 0) ? result[0] : null;
+        //return (resultado.length > 0) ? resultado[0] : null;
         //return resultado;
 
         //return rows.length > 0;
@@ -148,10 +156,20 @@ export default class ReclamosBD {
     }
 
 
-    obtenerReclamoPorId = async (idReclamo) => {
-        const consultaSql = "SELECT * FROM reclamos WHERE idReclamo = ?";
+    //a partir de mi id, buscar la oficina a la que pertenezco, y le quito su idReclamoTipo
+    obtenerReclamoPorId = async (idUsuario) => {
+        const consultaSql = "SELECT  FROM reclamos WHERE idReclamo = ?";
         const [reclamo] = await conexion.query(consultaSql, [idReclamo]);
         return reclamo.length > 0 ? reclamo[0] : null;
+    };
+
+    obtenerTipoReclamoPorUsuario = async (idUsuario) => {
+        const consultaSql = `SELECT o.idReclamoTipo FROM oficinas o JOIN usuarios_oficinas uo ON o.idOficina = uo.idOficina WHERE uo.idUsuario = ?;`
+
+        const [tipoReclamo] = await conexion.query(consultaSql, [idUsuario]);
+
+        //return tipoReclamo;
+        return (tipoReclamo.length > 0) ? tipoReclamo[0] : null;
     };
 
     actualizarEstadoReclamo = async (idReclamo, idReclamoEstado) => {
@@ -159,9 +177,9 @@ export default class ReclamosBD {
         const [resultado] = await conexion.query(consultaSql, [idReclamoEstado, idReclamo]);
         return resultado.affectedRows > 0;
     };
-    buscarDatosReportePdf = async () => {
-        const consultaSql = 'CALL `datosPDF`()';
 
+    buscarDatosReportePdf = async () => {
+        const consultaSql = 'CALL `datosPDF`()'; //llamado al procedmiento almacenado
         const [result] = await conexion.query(consultaSql);
 
         const datosReporte = {
