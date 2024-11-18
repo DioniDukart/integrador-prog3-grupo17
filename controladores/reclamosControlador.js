@@ -275,7 +275,7 @@ export default class ReclamosControlador {
             }
 
             if (idReclamoEstado < 2 || idReclamoEstado == 3 || idReclamoEstado > 4) {//que no permanezca como "creado(1), como cancelado(3) sin llamar a cancelarReclamo, o fuera de rango"
-                //basicamente solo sigue si es 2 o 4
+                //basicamente solo sigue si es 2 o 4 (idReclamoEstado!==2 || idReclamoEstado!==4)
                 //seria mejor llamar a otros metodos segun idReclamoEstado? Seria mas flexible ej: atenderEnProceso(), atenderCancelar(), atenderFinalizar(), etc 
                 return res.status(400).send({
                     estado: "Falla",
@@ -375,7 +375,7 @@ export default class ReclamosControlador {
             res.set(headers);
 
             if (formato === 'pdf') {
-                // respuesta a cliente  
+                // respuesta a cliente
                 res.status(200).end(buffer);
             } else if (formato === 'csv') {
                 // respuesta a cliente

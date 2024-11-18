@@ -211,7 +211,7 @@ export default class ReclamosServicios {
         return {
             buffer: pdf,
             headers: {
-                'Content-Type': 'application/pdf',
+                'Content-Type': 'application/pdf', //refiere al comportamiento del navegador frente al archivo
                 'Content-Disposition': 'inline; filename="reporte.pdf"'
             }
         };
@@ -224,12 +224,12 @@ export default class ReclamosServicios {
             return { estado: false, mensaje: 'Sin datos para el reporte' };
         }
 
-        const csv = await this.informesServicios.informeReclamosCsv(datosReporte);
+        const rutaCsv = await this.informesServicios.informeReclamosCsv(datosReporte);
         return {
-            path: csv,
+            path: rutaCsv,
             headers: {
-                'Content-Type': 'text/csv',
-                'Content-Disposition': 'attachment; filename="reporte.csv"'
+                'Content-Type': 'text/csv', //
+                'Content-Disposition': 'attachment; filename="reporte.csv"' //attachment pq es una ruta, la del csv
             }
         };
 

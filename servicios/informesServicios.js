@@ -12,10 +12,12 @@ const __dirname = path.dirname(__filename);
 export default class InformesServicios {
 
     informeReclamosCsv = async (datosReporte) => {
+        //se arma la ruta donde se guadara el archivo
         let ruta = path.resolve(__dirname, '..');
-        ruta = path.join(ruta, '../utilidades/reclamos.csv');
+        ruta = path.join(ruta, '/utilidades/reclamos.csv');
 
         // configura escrito csv
+        // los datos son los traidos por la consulta
         const csvWriter = createObjectCsvWriter({
             path: ruta,
             header: [
@@ -65,7 +67,7 @@ export default class InformesServicios {
             return pdfBuffer;
 
         } catch (error) {
-            console.error('Error generando el PDF:', error);
+            console.error('Error al generar el informe en formato PDF:', error);
             throw error;
         }
     }

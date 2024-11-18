@@ -188,10 +188,26 @@ export default class UsuariosControlador {
     // método para que un cliente (idTipoUsuario=3) actualice su perfil
     actualizarPerfilCliente = async (req, res) => {
         const idUsuario = req.user.idUsuario;
-        const datosActualizados = req.body;
+
+
+        if (idUsuario === null || idUsuario === undefined) {
+            res.status(404).json({ status: "Fallo", data: { error: "El parametro no puede ser vacio." } });
+        }
+
+        //const datosActualizados = req.body;
+        const { nombre, apellido, } = req.body;
+        const datosActualizados = {
+            nombre: nombre,
+            apellido: apellido,
+            //correoElectronico:correoElectronico
+        }
+
+        const imagen = req.file ? req.file.filename : null;
+        //datosActualizados.imagen=imagen; //?
+        datosActualizados = { ...datosActualizados, imagen };
 
         // Validar que los datos requeridos estén presentes
-        if (!idUsuario || !datosActualizados) {
+        if (Object.keys(datosActualizados).length === 0) {
             return res.status(400).json({ mensaje: "Falta información para actualizar el perfil" });
         }
 
@@ -199,7 +215,7 @@ export default class UsuariosControlador {
             // Llamar al servicio para actualizar
             const resultado = await this.usuariosServicios.actualizarPerfilCliente(idUsuario, datosActualizados);
 
-            if (resultado) {
+            if (resultado.estado) {
                 res.status(200).json({ mensaje: "Perfil actualizado correctamente" });
             } else {
                 res.status(404).json({ mensaje: "No se encontró el usuario" });

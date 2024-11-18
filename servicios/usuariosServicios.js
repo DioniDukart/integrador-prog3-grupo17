@@ -74,25 +74,24 @@ export default class UsuariosServicios {
     actualizarPerfilCliente = async (idUsuario, datos) => {
         /*
         const usuario = await this.buscarPorId(idUsuario);
-
-        // Verifica que el usuario exista y sea del tipo Cliente (idTipoUsuario 3)
+        
         if (!usuario || usuario.idTipoUsuario !== 3) {
             throw new Error("Solo los usuarios tipo Cliente pueden actualizar su perfil.");
         }
-
-        // Llama al método de actualización de datos
-        return this.actualizar(idUsuario, datos);
         */
 
         const existe = await this.usuariosBD.buscarPorId(idUsuario);
+        // Verifica que el usuario exista
         if (existe === null) {//!existe
             return { estado: false, mensaje: "No existe Cliente con ese id." };
         }
+        //si no es del tipo Cliente (idTipoUsuario 3)
         if (existe.idTipoUsuario !== 3) {
             return { estado: false, mensaje: "El usuario no es de tipo Cliente." };
         }
 
-        const actualizado = await this.usuariosBD.actualizar(idUsuario, datos);//o llamar this.actualizar? o usuariosBD.actualizarPerfilCliente
+        const actualizado = await this.usuariosBD.actualizar(idUsuario, datos);//o llamar this.actualizar? sobraria el control de existencia?
+        //const actualizado = await this.actualizar(idUsuario, datos);
 
         if (actualizado) {
             return { estado: true, mensaje: "Usuario modificado." };
