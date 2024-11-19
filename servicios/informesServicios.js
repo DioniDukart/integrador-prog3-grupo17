@@ -13,7 +13,7 @@ export default class InformesServicios {
     
     informeReclamosCsv = async (datosReporte) => {
         let ruta = path.resolve(__dirname, '..');
-        ruta = path.join(ruta, '../utilidades/reclamos.csv'); 
+        ruta = path.join(ruta, '/utilidades/reclamos.csv'); 
 
         // configura escrito csv
         const csvWriter = createObjectCsvWriter({
