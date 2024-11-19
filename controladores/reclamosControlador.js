@@ -2,6 +2,8 @@ import ReclamosServicios from "../servicios/reclamosServicios.js";
 import UsuariosOficinasBD from "../bd/usuariosOficinasBD.js";
 const formatosPermitidos = ['pdf', 'csv'];
 
+const formatosPermitidos = ['pdf', 'csv'];
+
 export default class ReclamosControlador {
 
     constructor() {
@@ -74,18 +76,16 @@ export default class ReclamosControlador {
     buscarReclamosOficina = async (req, res) => {
         const idUsuario = req.user.idUsuario;
         //buscar el tipo de su oficina
-        //a partir de mi id, buscar la oficina a la que pertenezco, y le quito su idReclamoTipo
-        //..
-        const tipoReclamo= await this.reclamosServicios.obtenerTipoReclamoPorUsuario(idUsuario);
-        if(!tipoReclamo){
+        //a partir de mi id, buscar la oficina a la que pertenezco, y obtengo su idReclamoTipo
+        const idReclamoTipo = await this.reclamosServicios.obtenerTipoReclamoPorUsuario(idUsuario);
+        if (!idReclamoTipo) {
             res.status(500).json({
                 mensaje: "No se encontro el tipo de reclamo de la oficina del empleado."
             });
         };
 
         try {
-            const resultado = await this.reclamosServicios.buscarReclamosOficina(tipoReclamo);
-
+            const resultado = await this.reclamosServicios.buscarReclamosOficina(idReclamoTipo.idReclamoTipo);
             if (resultado.length === 0) {
                 res.status(500).json({
                     mensaje: "No se encontraron resultados de Reclamos del tipo de la oficina del empleado."
@@ -266,12 +266,20 @@ export default class ReclamosControlador {
         try {
             const idReclamo = req.params.idReclamo;
             const idReclamoEstado = req.body.idReclamoEstado; //el nuevo estado de reclamo recibido por cuerpo de solicitud
-            const idUsuario= req.user.idUsuario;
+            const idUsuario = req.user.idUsuario;
 
             if (idReclamoEstado === undefined) {
                 return res.status(400).send({
                     estado: "Falla",
                     mensaje: "Falta el id del estado de reclamo."
+                })
+            }
+
+            const reclamo = await this.reclamosServicios.buscarPorId(idReclamo);
+            if (reclamo.idReclamoEstado == 2 || reclamo.idReclamoEstado == 4) {
+                return res.status(400).send({
+                    estado: "Falla",
+                    mensaje: "El reclamo del id recibido ya se encuentra cancelado o finalizado."
                 })
             }
 
@@ -287,9 +295,6 @@ export default class ReclamosControlador {
             //Averiguo el idOficina buscando en usuarios-oficinas la que tenga el idUsuario, el cual saco del token
             //Luego verifico el idReclamoTipo de la misma oficina
             //Finalmente veo si el idReclamoTipo de la oficina, es el mismo idReclamoTipo del Reclamo
-            /*
-            //{"idUsuario": 16,  "usuario": "Dionisio Dukart",  "idTipoUsuario"=1}
-            */
             const coincidencia = await this.reclamosServicios.coincidenciaReclamoOficina(idUsuario, idReclamo);//trae true o  false
             //console.log("coincidencia: ", coincidencia);
             if (!coincidencia) {
@@ -306,7 +311,7 @@ export default class ReclamosControlador {
             if (idReclamoEstado == 4) {//si es finalizado 
                 const fechaFinalizado = new Date().toISOString().slice(0, 19).replace('T', ' '); //creo fecha
                 dato.fechaFinalizado = fechaFinalizado;//la agrego al objeto dato
-                dato.idUsuarioFinalizador= idUsuario;//y agrego el id de usuario finalizador sacado del token
+                dato.idUsuarioFinalizador = idUsuario;//y agrego el id de usuario finalizador sacado del token
             }
 
             //console.log("dato: ", dato);
@@ -359,7 +364,6 @@ export default class ReclamosControlador {
 
 
     informe = async (req, res) => {
-
         try {
             const formato = req.query.formato;
             if (!formato || !formatosPermitidos.includes(formato)) {

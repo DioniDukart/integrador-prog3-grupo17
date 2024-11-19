@@ -90,9 +90,8 @@ export default class UsuariosBD {
     }
 
     actualizar = async (idUsuario, usuario) => {
-        const consultaSql = "UPDATE usuarios SET ? WHERE idUsuario=?;";
-
-        const [actualizado] = await this.conexion.query(consultaSql, [usuario, idUsuario]);
+        const consultaSql = `UPDATE usuarios SET ? WHERE idUsuario=?;`;
+        const [actualizado] = await conexion.query(consultaSql, [usuario, idUsuario]);
 
         //return this.buscarPorId(idUsuario);
         if (actualizado.affectedRows === 0) {
@@ -104,15 +103,16 @@ export default class UsuariosBD {
     eliminar = async (idUsuario) => {
         const consultaSql = "UPDATE usuarios SET activo=0 WHERE idUsuario=?;";
 
-        const [resultado] = await this.conexion.query(consultaSql, idUsuario);
+        const [resultado] = await conexion.query(consultaSql, idUsuario);
 
         return resultado;
     }
 
+
     // Método para actualizar solo el perfil de un usuario de tipo Cliente
     actualizarPerfilCliente = async (idUsuario, datos) => {
         // Primero, obtenemos el usuario por su ID
-        const usuario = await this.buscarPorId(idUsuario);
+        const usuario = await buscarPorId(idUsuario);
 
         // Verificamos que el usuario exista y sea del tipo Cliente (idTipoUsuario 3)
         if (!usuario || usuario.idTipoUsuario !== 3) {
@@ -130,6 +130,12 @@ export default class UsuariosBD {
         }
         return true;
         */
+    };
+
+    buscarImagen = async (idUsuario) => {
+        const consultaSql = "SELECT imagen FROM usuarios WHERE idUsuario=? AND activo=1;";
+        const [resultado] = await conexion.query(consultaSql, idUsuario);
+        return resultado;
     };
 
 

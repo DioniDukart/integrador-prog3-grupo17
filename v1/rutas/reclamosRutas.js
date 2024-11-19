@@ -2,7 +2,6 @@ import express from "express";
 import ReclamosControlador from "../../controladores/reclamosControlador.js";
 import autorizarUsuario from '../../middlewares/autorizarUsuario.js';
 
-
 /*
 const { verificarAutorizacion } = require('../middlewares/authMiddleware');
 const autorizarUsuario = require('../../middlewares/autorizarUsuario');

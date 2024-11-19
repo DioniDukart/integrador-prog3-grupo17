@@ -77,7 +77,6 @@ export default class ReclamosBD {
         if (resultado.affectedRows === 0) {
             return false;
         }
-
         return true;
     }
 
@@ -91,13 +90,18 @@ export default class ReclamosBD {
         return resultado;
     }
 
-    buscarReclamosOficina = async (id) => {
-        const consultaSql = `SELECT * FROM reclamos WHERE idReclamoTipo = ?`;
-        const [resultado] = await conexion.query(consultaSql, [id]);
+    buscarReclamosOficina = async (idReclamoTipo) => {
+        const consultaSql = `SELECT r.idReclamo, r.asunto, r.descripcion, r.fechaCreado, r.fechaFinalizado, r.fechaCancelado, 
+        CONCAT(r.idReclamoEstado, ' ', re.descripcion) AS reclamoEstado, 
+        CONCAT(r.idReclamoTipo, ' ', rt.descripcion) AS reclamoTipo
+        FROM reclamos r 
+        INNER JOIN reclamos_estado AS re ON re.idReclamoEstado=r.idReclamoEstado 
+        INNER JOIN reclamos_tipo AS rt ON rt.idReclamoTipo=r.idReclamoTipo 
+        WHERE r.idReclamoTipo = ?`;
+        const [resultado] = await conexion.query(consultaSql, [idReclamoTipo]);
 
         return resultado;
     }
-
 
     /*
         actualizar = async (idReclamo, reclamo) => {
