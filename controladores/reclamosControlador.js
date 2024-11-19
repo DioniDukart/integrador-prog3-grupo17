@@ -274,6 +274,14 @@ export default class ReclamosControlador {
                 })
             }
 
+            const reclamo = await this.reclamosServicios.buscarPorId(idReclamo);
+            if (reclamo.idReclamoEstado == 2 || reclamo.idReclamoEstado == 4) {
+                return res.status(400).send({
+                    estado: "Falla",
+                    mensaje: "El reclamo del id recibido ya se encuentra cancelado o finalizado."
+                })
+            }
+
             if (idReclamoEstado < 2 || idReclamoEstado == 3 || idReclamoEstado > 4) {//que no permanezca como "creado(1), como cancelado(3) sin llamar a cancelarReclamo, o fuera de rango"
                 //basicamente solo sigue si es 2 o 4 (idReclamoEstado!==2 || idReclamoEstado!==4)
                 //seria mejor llamar a otros metodos segun idReclamoEstado? Seria mas flexible ej: atenderEnProceso(), atenderCancelar(), atenderFinalizar(), etc 
@@ -286,9 +294,6 @@ export default class ReclamosControlador {
             //Averiguo el idOficina buscando en usuarios-oficinas la que tenga el idUsuario, el cual saco del token
             //Luego verifico el idReclamoTipo de la misma oficina
             //Finalmente veo si el idReclamoTipo de la oficina, es el mismo idReclamoTipo del Reclamo
-            /*
-            //{"idUsuario": 16,  "usuario": "Dionisio Dukart",  "idTipoUsuario"=1}
-            */
             const coincidencia = await this.reclamosServicios.coincidenciaReclamoOficina(idUsuario, idReclamo);//trae true o  false
             //console.log("coincidencia: ", coincidencia);
             if (!coincidencia) {
