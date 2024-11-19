@@ -188,25 +188,33 @@ export default class UsuariosControlador {
     // método para que un cliente (idTipoUsuario=3) actualice su perfil
     actualizarPerfilCliente = async (req, res) => {
         const idUsuario = req.user.idUsuario;
-
-
+        
         if (idUsuario === null || idUsuario === undefined) {
             res.status(404).json({ status: "Fallo", data: { error: "El parametro no puede ser vacio." } });
         }
 
         //const datosActualizados = req.body;
-        const { nombre, apellido, } = req.body;
-        const datosActualizados = {
+        const { nombre, apellido } = req.body;
+        /*
+        var datosActualizados = {
             nombre: nombre,
             apellido: apellido,
             //correoElectronico:correoElectronico
         }
+        */
 
         const imagen = req.file ? req.file.filename : null;
         //datosActualizados.imagen=imagen; //?
-        datosActualizados = { ...datosActualizados, imagen };
+        //datosActualizados = { ...datosActualizados, imagen };
 
-        // Validar que los datos requeridos estén presentes
+        const datosActualizados = {
+            nombre: nombre,
+            apellido: apellido,
+            imagen: imagen
+        }
+        //console.log({datosActualizados});
+
+        // Validar que haya algun dato presente
         if (Object.keys(datosActualizados).length === 0) {
             return res.status(400).json({ mensaje: "Falta información para actualizar el perfil" });
         }
@@ -222,8 +230,31 @@ export default class UsuariosControlador {
             }
 
         } catch (error) {
-            res.status(500).json({ mensaje: "Error interno del servidor" });
+            res.status(500).json({ mensaje: "Error interno del servidor"+" "+error });
         }
+    }
+
+    buscarImagen = async (req, res) => {
+        const idUsuario = req.params.idUsuario;
+        if (!idUsuario) {
+            res.status(404).json({
+                mensaje: "No se recibio nombre de imagen."
+            });
+        }
+        try {
+            const resultado = await this.usuariosServicios.buscarImagen(idUsuario);
+            if (!resultado) {
+                res.status(404).json({
+                    mensaje: "No se encontro resultado."
+                });
+            }
+            res.status(200).json(resultado);
+        } catch (err) {
+            res.status(500).json({
+                mensaje: "Error"
+            });
+        }
+
     }
 
     eliminar = async (req, res) => {

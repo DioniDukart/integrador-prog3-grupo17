@@ -1,4 +1,5 @@
 import multer from "multer";
+import crypto from "crypto";
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {//cb=callback
@@ -6,10 +7,11 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         /*
-        let ext = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length);
-        cb(null, crypto.randomUUID() + extension);
         */
-        cb(null, file.originalname + '-' + Date.now());
+        let extension = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length);
+        cb(null, crypto.randomUUID() + extension);
+        //cb(null, file.originalname + ' - ' + Date.now());
     }
 })
+
 export { storage };

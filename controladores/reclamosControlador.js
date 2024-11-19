@@ -73,18 +73,16 @@ export default class ReclamosControlador {
     buscarReclamosOficina = async (req, res) => {
         const idUsuario = req.user.idUsuario;
         //buscar el tipo de su oficina
-        //a partir de mi id, buscar la oficina a la que pertenezco, y le quito su idReclamoTipo
-        //..
-        const tipoReclamo= await this.reclamosServicios.obtenerTipoReclamoPorUsuario(idUsuario);
-        if(!tipoReclamo){
+        //a partir de mi id, buscar la oficina a la que pertenezco, y obtengo su idReclamoTipo
+        const idReclamoTipo = await this.reclamosServicios.obtenerTipoReclamoPorUsuario(idUsuario);
+        if (!idReclamoTipo) {
             res.status(500).json({
                 mensaje: "No se encontro el tipo de reclamo de la oficina del empleado."
             });
         };
 
         try {
-            const resultado = await this.reclamosServicios.buscarReclamosOficina(tipoReclamo);
-
+            const resultado = await this.reclamosServicios.buscarReclamosOficina(idReclamoTipo.idReclamoTipo);
             if (resultado.length === 0) {
                 res.status(500).json({
                     mensaje: "No se encontraron resultados de Reclamos del tipo de la oficina del empleado."
@@ -265,7 +263,7 @@ export default class ReclamosControlador {
         try {
             const idReclamo = req.params.idReclamo;
             const idReclamoEstado = req.body.idReclamoEstado; //el nuevo estado de reclamo recibido por cuerpo de solicitud
-            const idUsuario= req.user.idUsuario;
+            const idUsuario = req.user.idUsuario;
 
             if (idReclamoEstado === undefined) {
                 return res.status(400).send({
@@ -305,7 +303,7 @@ export default class ReclamosControlador {
             if (idReclamoEstado == 4) {//si es finalizado 
                 const fechaFinalizado = new Date().toISOString().slice(0, 19).replace('T', ' '); //creo fecha
                 dato.fechaFinalizado = fechaFinalizado;//la agrego al objeto dato
-                dato.idUsuarioFinalizador= idUsuario;//y agrego el id de usuario finalizador sacado del token
+                dato.idUsuarioFinalizador = idUsuario;//y agrego el id de usuario finalizador sacado del token
             }
 
             //console.log("dato: ", dato);

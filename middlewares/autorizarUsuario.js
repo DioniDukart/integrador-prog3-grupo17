@@ -1,7 +1,7 @@
 export default function autorizarUsuario( perfilesAutorizados = [] ) {
 
     return async (req, res, next) => {
-        console.log("Entrando a autorizarUsuario");
+        //console.log("Entrando a autorizarUsuario");
         const usuario = req.user;
         //console.log(req.user+" autorizarUsuario");
         //console.log(usuario+" autorizarUsuario");
