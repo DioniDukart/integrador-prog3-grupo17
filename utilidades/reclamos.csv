@@ -1,0 +1,10 @@
+RECLAMO,TIPO,ESTADO,FECHA CREADO,CLIENTE
+5,Falla de motor,Creado,2024-08-19 06:00:00,Yara Greyjoy
+7,Falla de frenos,Creado,2024-08-15 07:15:00,Catelyn Stark
+8,Falla de suspensión,Creado,2024-08-15 08:00:00,Khal Drogo
+9,Aprobación de cobertura,Creado,2024-08-15 09:30:00,Khal Drogo
+15,Falla de motor,Creado,2024-08-28 19:26:12,Jose Battaglia
+17,Falla de frenos,Creado,2024-11-18 23:44:53,Cliente Prueba
+10,Aprobación de cobertura,En Proceso,2024-08-15 09:00:00,Khal Drogo
+11,Falla de suspensión,En Proceso,2024-08-15 15:00:00,Catelyn Stark
+16,Falla de motor,En Proceso,2024-11-14 18:54:58, 
