@@ -98,7 +98,7 @@ import { router as v1ReclamosTipos } from "./v1/rutas/reclamosTiposRutas.js";
 app.use("/api/v1/autenticacion", v1Autenticacion);
 app.use("/api/v1/reclamos", passport.authenticate("jwt", { session: false }), v1Reclamos); //pide autenticacion (cual sea el tipoUsuario) para el acceso a la ruta;
 app.use("/api/v1/reclamos-estados", passport.authenticate("jwt", { session: false }), v1ReclamosEstados);
-app.use('/api/v1/usuarios', passport.authenticate("jwt", { session: false }), v1Usuarios);
+app.use('/api/v1/usuarios', v1Usuarios);
 app.use("/api/v1/usuarios-tipos", passport.authenticate("jwt", { session: false }), v1UsuariosTipos);
 app.use("/api/v1/oficinas", passport.authenticate("jwt", { session: false }), v1Oficinas);
 app.use("/api/v1/usuarios-oficinas", passport.authenticate("jwt", { session: false }), v1UsuariosOficinas);

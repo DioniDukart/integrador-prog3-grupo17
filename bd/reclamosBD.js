@@ -9,6 +9,7 @@ export default class ReclamosBD {
         return infoCreacion;
     };
 
+    /*
     buscarTodos = async () => {
         //console.log("Entra en buscarTodos de reclamosBD");
         const consultaSql = "SELECT * FROM reclamos";
@@ -17,40 +18,29 @@ export default class ReclamosBD {
         //return (resultado.length > 0) ? resultado[0] : null;//me deja solo el primero
         return resultado;
     };
+    */
 
-    /*
-    //Consulta todos CON PAGINACION
-    buscarTodos= async (filter = null, limit = 0, offset = 0, order = "idReclamo", asc = "ASC") => {
 
-        // Defino el string de consulta
-        let strSql= "SELECT * FROM reclamos WHERE activo=1";
-        //let strSql = `SELECT actor_id AS actorId, first_name AS firstName, last_name AS lastName, last_update AS lastUpdate FROM actor `
-
-        const filterValuesArray = [];
-
-        if (filter && Object.keys(filter).length > 0) {
-            strSql += "WHERE ";
-            for (const clave in filter) {
-                strSql += `${clave} = ? AND `;
-
-                filterValuesArray.push(filter[clave]);
-            }
-
-            strSql = strSql.substring(0, strSql.length - 4);
-        }
-
-        strSql += ` ORDER BY ${order} ${asc}`;
+    
+    buscarTodos = async (limit = 0, offset = 0) => {
+        // donde tipo usuario sea x
+        let sql = `SELECT r.idReclamo, r.asunto, r.descripcion, r.fechaCreado, r.fechaFinalizado, r.fechaCancelado, 
+                        r.idReclamoEstado, re.descripcion AS "Descripción Estado", 
+                        r.idReclamoTipo, rt.descripcion AS "Descripción Tipo", 
+                        u.nombre AS "Creado por"
+                        FROM reclamos AS r
+                        INNER JOIN reclamos_tipo AS rt ON rt.idReclamoTipo = r.idReclamoTipo
+                        INNER JOIN reclamos_estado AS re ON re.idReclamoEstado = r.idReclamoEstado
+                        INNER JOIN usuarios AS u ON u.idUsuario = r.idUsuarioCreador `;
 
         if (limit) {
-            strSql += 'LIMIT ? OFFSET ? ';
+            sql += 'LIMIT ? OFFSET ? ';
         }
 
-        // Ejecuto la consulta
-        const [rows] = await this.conexion.query(strSql, [...filterValuesArray, limit, offset]);
-        return rows;
-
+        const [result] = await conexion.query(sql, [limit, offset]);
+        return result;
     }
-    */
+    
 
     buscarPorId = async (idReclamo) => {
         const consultaSql = `SELECT * FROM reclamos WHERE idReclamo = ?`;
@@ -209,5 +199,31 @@ export default class ReclamosBD {
         const [result] = await conexion.query(consultaSql);
         return result;
     }
+
+
+    buscarEstadisticasReclamos = async () => {
+        const consultaSql = 'CALL estadisticasReclamos()';  // Llamada al procedimiento almacenado
+        const [result] = await conexion.query(consultaSql);
+    
+        // Verifica si el resultado tiene datos
+        if (result.length > 0) {
+            // Devuelve los datos como JSON
+            return {
+                reclamosTotales: result[0][0].reclamosTotales,
+                reclamosNoFinalizados: result[0][0].reclamosNoFinalizados,
+                reclamosFinalizados: result[0][0].reclamosFinalizados,
+                descripcionTipoRreclamoFrecuente: result[0][0].descripcionTipoRreclamoFrecuente,
+                cantidadTipoRreclamoFrecuente: result[0][0].cantidadTipoRreclamoFrecuente,
+                tiempoPromedioResolucionHoras: result[0][0].tiempoPromedioResolucion
+            };
+        } else {
+            // Si no hay resultados, retorna un JSON vacío o el mensaje que consideres apropiado
+            return {};
+        }
+    }
+
+
+
+
 
 }

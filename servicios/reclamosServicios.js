@@ -20,10 +20,17 @@ export default class ReclamosServicios {
         return this.reclamosBD.crear(reclamoNuevo);
     }
 
+    buscarTodos = (limit, offset) => {
+        return this.reclamosBD.buscarTodos(limit, offset);
+    }
+
+
+    /*
     buscarTodos = () => {
         //Switch para verificar el tipo de usuario, y de ahi a distintos metodos en bd?
         return this.reclamosBD.buscarTodos();
     }
+    */
 
     buscarReclamosUsuario = (id) => {
         //Switch para verificar el tipo de usuario, y de ahi a distintos metodos en bd?
@@ -233,6 +240,25 @@ export default class ReclamosServicios {
         };
 
     }
+
+
+    buscarEstadisticasReclamos = async () => {
+        try {
+            // Llamamos al método de la capa de datos que ejecuta el procedimiento almacenado
+            const estadisticas = await this.reclamosBD.buscarEstadisticasReclamos();
+
+            // Si no hay datos, retornar un mensaje adecuado
+            if (!estadisticas || estadisticas.length === 0) {
+                return { estado: false, mensaje: "No se pudieron obtener las estadísticas de los reclamos." };
+            }
+
+            // Retornamos las estadísticas obtenidas del procedimiento almacenado
+            return { estado: true, datos: estadisticas };
+        } catch (error) {
+            console.error("Error al obtener las estadísticas de reclamos:", error);
+            return { estado: false, mensaje: "Hubo un error al obtener las estadísticas." };
+        }
+    };
 
 
 }

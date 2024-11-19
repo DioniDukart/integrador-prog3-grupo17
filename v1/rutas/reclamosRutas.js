@@ -13,6 +13,9 @@ const reclamosControlador = new ReclamosControlador();
 router.get("/ObtenerReclamosUsuario", autorizarUsuario([3]), reclamosControlador.buscarReclamosUsuario);
 router.get("/ObtenerReclamosOficina", autorizarUsuario([2]), reclamosControlador.buscarReclamosOficina);
 router.get('/informe', autorizarUsuario([1]), reclamosControlador.informe);
+router.get("/estadisticas", autorizarUsuario([1]), reclamosControlador.buscarEstadisticasReclamos);
+
+
 
 /**
  * @swagger
@@ -178,7 +181,7 @@ router.post("/",  autorizarUsuario([3]), reclamosControlador.crear); //solo clie
  *              items:
  *               $ref: '#/components/schemas/Reclamo'
  */
-router.get("/", autorizarUsuario([1]), reclamosControlador.buscarTodos);
+router.get("/todos", autorizarUsuario([1]), reclamosControlador.buscarTodos);
 
 /**
  * @swagger

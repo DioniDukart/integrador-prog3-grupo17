@@ -101,6 +101,7 @@ export default class ReclamosControlador {
     }
 
     //consulta todos
+    /*
     buscarTodos = async (req, res) => {
         try {
             const resultado = await this.reclamosServicios.buscarTodos();
@@ -119,42 +120,34 @@ export default class ReclamosControlador {
             });
         }
     }
+    */
 
-    /* 
+    
     //consulta todos CON PAGINACION
     buscarTodos = async (req, res) => {
-        //Filtros
-        //const firstName = req.query.firstName;
-        //const lastName = req.query.lastName;
-        const id = req.query.idReclamo;
-
+        // console.log(req.user)
+        
         //Paginación
         const limit = req.query.limit;
         const offset = req.query.offset;
-        const order = req.query.order;
-        const asc = req.query.asc;
 
-        try {
-
+        try{
             //Si no están definidos limit y offset no hago paginación
             let pLimit = limit ? Number(limit) : 0;
             let pOffset = offset ? Number(offset) : 0;
-            //let pOrder = order || "actorId";
-            let pOrder = order || "idReclamo"; //¿esto es como esta en la bd, o como se lo renombre con "AS"?
-            let pAsc = asc === "false" ? false : true;
 
-            //const data = await this.service.findAll({ firstName, lastName }, pLimit, pOffset, pOrder, pAsc);
-            const data = await this.service.findAll({ id, }, pLimit, pOffset, pOrder, pAsc);
+            const reclamos = await this.reclamosServicios.buscarTodos(pLimit, pOffset);
+            res.status(200).send(
+                {estado: 'OK' , data: reclamos}
+            );
 
-            res.send(data);
-
-        } catch (exc) {
-            res.status(500).json({
-                mensaje: "Error"
+        }catch (error){
+            res.status(500).send({
+                estado:"Falla", mensaje: "Error interno en servidor."
             });
         }
     }
-    */
+    
 
     //consulta un unico segun su id
     buscarPorId = async (req, res) => {
@@ -399,5 +392,27 @@ export default class ReclamosControlador {
             });
         }
     }
+
+    buscarEstadisticasReclamos = async (req, res) => {
+        try {
+            // Llamamos al servicio que obtiene las estadísticas
+            const estadisticas = await this.reclamosServicios.buscarEstadisticasReclamos();
+
+            if (Object.keys(estadisticas).length === 0) {
+                return res.status(404).json({
+                    mensaje: "No se encontraron estadísticas de reclamos."
+                });
+            }
+
+            // Enviamos los resultados de las estadísticas en formato JSON
+            res.status(200).json(estadisticas);
+        } catch (err) {
+            console.error("Error al obtener estadísticas de reclamos:", err);
+            res.status(500).json({
+                mensaje: "Error interno al obtener las estadísticas de reclamos."
+            });
+        }
+    }
+
 
 }

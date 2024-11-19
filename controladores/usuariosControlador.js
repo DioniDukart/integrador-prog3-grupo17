@@ -6,6 +6,59 @@ export default class UsuariosControlador {
         this.usuariosServicios = new UsuariosServicios();
     }
 
+
+    //crear cliente nuevo
+    crearCliente = async (req, res) => {
+        try {
+            const { nombre, apellido, correoElectronico, contrasenia, imagen } = req.body;
+
+            //verifico requeridos
+            if (!nombre || !apellido || !correoElectronico || !contrasenia) {
+                return res.status(404).json({
+                    mensaje: "Falta/n parametro/s obligatorio/s."
+                })
+            }
+            /*
+            if(this.buscarPorCorreo(correoElectronico)){
+                return res.status(404).json({
+                    mensaje: "Ya existe un usuario con esa direccion de correo."
+                })
+            }
+            */
+            const contraseniaHash = createHash('sha256').update(contrasenia).digest('hex');
+            const usuario = {
+                nombre: nombre,
+                apellido: apellido,
+                correoElectronico: correoElectronico,
+                contrasenia: contraseniaHash,
+                idTipoUsuario: 3,
+                imagen: imagen
+            }
+
+            const resultado = await this.usuariosServicios.crear(usuario);
+
+            if (resultado.estado) {
+                res.status(201).send({ estado: "OK", data: resultado.data }); //mensaje: "Reclamo creado."
+            } else {
+                res.status(404).send({ estado: "Falla", mensaje: resultado.mensaje });
+            }
+            /* 
+            if (resultado.affectedRows === 0) {
+                return res.status(404).json({
+                    mensaje: "No se pudo crear."
+                });
+            }
+                */
+            //puedo usar resultado.insertId para ya traerme/verificar/mostrar la entrada creada
+
+            //res.status(200).json(resultado);
+        } catch (err) {
+            res.status(500).json({
+                estado: "Fallo.", mensaje: "Error interno en servidor.", err: err
+            });
+        };
+    }
+
     //crea usuario nuevo
     crear = async (req, res) => {
         try {
