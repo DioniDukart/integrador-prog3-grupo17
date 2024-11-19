@@ -2,7 +2,6 @@ import ReclamosServicios from "../servicios/reclamosServicios.js";
 import UsuariosOficinasBD from "../bd/usuariosOficinasBD.js";
 const formatosPermitidos = ['pdf', 'csv'];
 
-const formatosPermitidos = ['pdf', 'csv'];
 
 export default class ReclamosControlador {
 
