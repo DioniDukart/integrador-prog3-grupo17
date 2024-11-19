@@ -12,6 +12,7 @@ const router = express.Router();
 
 const reclamosControlador = new ReclamosControlador();
 router.get("/ObtenerReclamosUsuario", autorizarUsuario([3]), reclamosControlador.buscarReclamosUsuario);
+router.get("/ObtenerReclamosOficina", autorizarUsuario([2]), reclamosControlador.buscarReclamosOficina);
 router.get('/informe', autorizarUsuario([1]), reclamosControlador.informe);
 
 /**

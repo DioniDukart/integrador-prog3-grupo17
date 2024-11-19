@@ -71,6 +71,36 @@ export default class ReclamosControlador {
         }
     }
 
+    buscarReclamosOficina = async (req, res) => {
+        const idUsuario = req.user.idUsuario;
+        //buscar el tipo de su oficina
+        //a partir de mi id, buscar la oficina a la que pertenezco, y le quito su idReclamoTipo
+        //..
+        const tipoReclamo= await this.reclamosServicios.obtenerTipoReclamoPorUsuario(idUsuario);
+        if(!tipoReclamo){
+            res.status(500).json({
+                mensaje: "No se encontro el tipo de reclamo de la oficina del empleado."
+            });
+        };
+
+        try {
+            const resultado = await this.reclamosServicios.buscarReclamosOficina(tipoReclamo);
+
+            if (resultado.length === 0) {
+                res.status(500).json({
+                    mensaje: "No se encontraron resultados de Reclamos del tipo de la oficina del empleado."
+                });
+            }
+
+            res.status(200).json(resultado);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({
+                mensaje: "Error interno en el servidor."
+            });
+        }
+    }
+
     //consulta todos
     buscarTodos = async (req, res) => {
         try {
@@ -246,7 +276,7 @@ export default class ReclamosControlador {
             }
 
             if (idReclamoEstado < 2 || idReclamoEstado == 3 || idReclamoEstado > 4) {//que no permanezca como "creado(1), como cancelado(3) sin llamar a cancelarReclamo, o fuera de rango"
-                //basicamente solo sigue si es 2 o 4
+                //basicamente solo sigue si es 2 o 4 (idReclamoEstado!==2 || idReclamoEstado!==4)
                 //seria mejor llamar a otros metodos segun idReclamoEstado? Seria mas flexible ej: atenderEnProceso(), atenderCancelar(), atenderFinalizar(), etc 
                 return res.status(400).send({
                     estado: "Falla",
@@ -346,7 +376,7 @@ export default class ReclamosControlador {
             res.set(headers);
 
             if (formato === 'pdf') {
-                // respuesta a cliente  
+                // respuesta a cliente
                 res.status(200).end(buffer);
             } else if (formato === 'csv') {
                 // respuesta a cliente
