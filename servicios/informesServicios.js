@@ -14,7 +14,9 @@ export default class InformesServicios {
     informeReclamosCsv = async (datosReporte) => {
         //se arma la ruta donde se guadara el archivo
         let ruta = path.resolve(__dirname, '..');
+
         ruta = path.join(ruta, '/utilidades/reclamos.csv');
+
 
         // configura escrito csv
         // los datos son los traidos por la consulta
