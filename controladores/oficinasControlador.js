@@ -171,7 +171,7 @@ export default class OficinasControlador {
 
     // Quitar un empleado de una oficina
     quitarEmpleado = async (req, res) => {
-        const idOficina = req.params.idUsuario;
+        const idOficina = req.params.idOficina;
         const { idUsuario } = req.body;
 
         if (!idOficina || !idUsuario) {

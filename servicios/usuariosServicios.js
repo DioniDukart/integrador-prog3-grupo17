@@ -1,5 +1,8 @@
 import UsuariosBD from "../bd/usuariosBD.js";
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 export default class UsuariosServicios {
     constructor() {
         this.usuariosBD = new UsuariosBD();
@@ -93,8 +96,17 @@ export default class UsuariosServicios {
         }
     };
 
-    buscarImagen = async (idUsuario)=>{
-        return await this.usuariosBD.buscarImagen(idUsuario);
-        //COMPLETAR
+    buscarImagen = async (idUsuario) => {
+        const resultado = await this.usuariosBD.buscarImagen(idUsuario);
+        if (resultado === null) {
+            return { estado: false, mensaje: "No existe Usuario con ese id." };
+        }
+
+        const __filename = fileURLToPath(import.meta.url);
+        const __dirname = path.dirname(__filename);
+        let rutaArchivo = path.resolve(__dirname, '..');
+
+        rutaArchivo = path.join(rutaArchivo, '/utilidades/' + resultado.imagen);
+        return rutaArchivo;
     };
 }

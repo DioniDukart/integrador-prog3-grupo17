@@ -18,13 +18,15 @@ export default class UsuariosControlador {
                     mensaje: "Falta/n parametro/s obligatorio/s."
                 })
             }
-            /*
-            if(this.buscarPorCorreo(correoElectronico)){
+            
+            const existencia = await this.usuariosServicios.buscarPorCorreo(correoElectronico);
+            //if (this.usuariosServicios.buscarPorCorreo(correoElectronico)){
+            if (!existencia) {
                 return res.status(404).json({
                     mensaje: "Ya existe un usuario con esa direccion de correo."
                 })
             }
-            */
+
             const contraseniaHash = createHash('sha256').update(contrasenia).digest('hex');
             const usuario = {
                 nombre: nombre,
@@ -71,7 +73,7 @@ export default class UsuariosControlador {
                 })
             }
             /*
-            if(this.buscarPorCorreo(correoElectronico)){
+            if(this.usuariosServicios.buscarPorCorreo(correoElectronico)){
                 return res.status(404).json({
                     mensaje: "Ya existe un usuario con esa direccion de correo."
                 })
@@ -241,7 +243,7 @@ export default class UsuariosControlador {
     // método para que un cliente (idTipoUsuario=3) actualice su perfil
     actualizarPerfilCliente = async (req, res) => {
         const idUsuario = req.user.idUsuario;
-        
+
         if (idUsuario === null || idUsuario === undefined) {
             res.status(404).json({ status: "Fallo", data: { error: "El parametro no puede ser vacio." } });
         }
@@ -283,7 +285,7 @@ export default class UsuariosControlador {
             }
 
         } catch (error) {
-            res.status(500).json({ mensaje: "Error interno del servidor"+" "+error });
+            res.status(500).json({ mensaje: "Error interno del servidor" + " " + error });
         }
     }
 
@@ -291,7 +293,7 @@ export default class UsuariosControlador {
         const idUsuario = req.params.idUsuario;
         if (!idUsuario) {
             res.status(404).json({
-                mensaje: "No se recibio nombre de imagen."
+                mensaje: "No se recibio id de usuario de imagen."
             });
         }
         try {

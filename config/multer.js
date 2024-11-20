@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
         */
         let extension = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length);
         cb(null, crypto.randomUUID() + extension);
-        //cb(null, file.originalname + ' - ' + Date.now());
+        //cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
 })
 

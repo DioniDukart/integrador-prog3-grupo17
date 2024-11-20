@@ -2,11 +2,6 @@ import express from "express";
 import ReclamosControlador from "../../controladores/reclamosControlador.js";
 import autorizarUsuario from '../../middlewares/autorizarUsuario.js';
 
-/*
-const { verificarAutorizacion } = require('../middlewares/authMiddleware');
-const autorizarUsuario = require('../../middlewares/autorizarUsuario');
-*/
-
 const router = express.Router();
 
 const reclamosControlador = new ReclamosControlador();
@@ -14,7 +9,6 @@ router.get("/ObtenerReclamosUsuario", autorizarUsuario([3]), reclamosControlador
 router.get("/ObtenerReclamosOficina", autorizarUsuario([2]), reclamosControlador.buscarReclamosOficina);
 router.get('/informe', autorizarUsuario([1]), reclamosControlador.informe);
 router.get("/estadisticas", autorizarUsuario([1]), reclamosControlador.buscarEstadisticasReclamos);
-
 
 
 /**
@@ -163,7 +157,7 @@ router.get("/estadisticas", autorizarUsuario([1]), reclamosControlador.buscarEst
  *                   type: string
  *                   example: "Faltan datos obligatorios"
  */
-router.post("/",  autorizarUsuario([3]), reclamosControlador.crear); //solo cliente? //faltaria otro generico para administradores?
+router.post("/", autorizarUsuario([3]), reclamosControlador.crear); //solo cliente? //faltaria otro generico para administradores?
 
 /**
  * @swagger

@@ -22,7 +22,7 @@ router.patch("/:idUsuario", passport.authenticate("jwt", { session: false }), au
 
 
 router.patch("/clientes/actualizarPerfil", upload.single("imagen"), passport.authenticate("jwt", { session: false }), autorizarUsuario([3]), usuariosControlador.actualizarPerfilCliente);
-router.get("/:idUsuario", passport.authenticate("jwt", { session: false }), autorizarUsuario([3]), usuariosControlador.buscarImagen);
+router.get("/imagen/:idUsuario", usuariosControlador.buscarImagen);
 
 //idTipoUsuario, 1=Admin 2=Empleado 3=Cliente 
 router.post("/empleados/crear", passport.authenticate("jwt", { session: false }), autorizarUsuario([1]), usuariosControlador.crearEmpleado);
@@ -33,5 +33,6 @@ router.get('/empleados/buscarConOficinas/', passport.authenticate("jwt", { sessi
 
 router.patch('/empleados/modificar/:idEmpleado', passport.authenticate("jwt", { session: false }), autorizarUsuario([1]), usuariosControlador.actualizarEmpleado);
 router.patch("/empleados/eliminar/:idUsuario", passport.authenticate("jwt", { session: false }), autorizarUsuario([1]), usuariosControlador.eliminarEmpleado);
+
 
 export { router };

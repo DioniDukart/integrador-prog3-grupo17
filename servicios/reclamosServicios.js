@@ -257,8 +257,8 @@ export default class ReclamosServicios {
         } catch (error) {
             console.error("Error al obtener las estadísticas de reclamos:", error);
             return { estado: false, mensaje: "Hubo un error al obtener las estadísticas." };
-        }
-    };
+        }
+    };
 
 
 }

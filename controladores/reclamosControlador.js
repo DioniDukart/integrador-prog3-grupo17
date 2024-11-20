@@ -122,32 +122,32 @@ export default class ReclamosControlador {
     }
     */
 
-    
+
     //consulta todos CON PAGINACION
     buscarTodos = async (req, res) => {
         // console.log(req.user)
-        
+
         //Paginación
         const limit = req.query.limit;
         const offset = req.query.offset;
 
-        try{
+        try {
             //Si no están definidos limit y offset no hago paginación
             let pLimit = limit ? Number(limit) : 0;
             let pOffset = offset ? Number(offset) : 0;
 
             const reclamos = await this.reclamosServicios.buscarTodos(pLimit, pOffset);
             res.status(200).send(
-                {estado: 'OK' , data: reclamos}
+                { estado: 'OK', data: reclamos }
             );
 
-        }catch (error){
+        } catch (error) {
             res.status(500).send({
-                estado:"Falla", mensaje: "Error interno en servidor."
+                estado: "Falla", mensaje: "Error interno en servidor."
             });
         }
     }
-    
+
 
     //consulta un unico segun su id
     buscarPorId = async (req, res) => {
@@ -411,8 +411,8 @@ export default class ReclamosControlador {
             res.status(500).json({
                 mensaje: "Error interno al obtener las estadísticas de reclamos."
             });
-        }
-    }
 
+        }
+    }
 
 }
