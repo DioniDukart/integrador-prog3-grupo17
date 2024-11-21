@@ -176,7 +176,7 @@ export default class ReclamosServicios {
         }
 
         // buscar los datos del cliente
-        const datosClienteReclamo = await this.reclamos.buscarInformacionClientePorReclamo(idReclamo);
+        const datosClienteReclamo = await this.reclamosBD.buscarClientePorReclamo(idReclamo);
         if (!datosClienteReclamo) {
             return { estado: false, mensaje: 'Faltan datos de cliente' };
         }
